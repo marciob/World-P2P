@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, User } from "lucide-react";
+import { ChevronDown, User, ArrowUpDown } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import OffersList from "./OffersList";
 
@@ -59,6 +59,16 @@ const TransactionForm = () => {
     setShowCurrencyTo(false);
   };
 
+  const handleSwapCurrencies = () => {
+    const tempCurrency = selectedFromCurrency;
+    setSelectedFromCurrency(selectedToCurrency);
+    setSelectedToCurrency(tempCurrency);
+
+    const tempAmount = amount;
+    setAmount(receiveAmount);
+    setReceiveAmount(tempAmount);
+  };
+
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen w-full overflow-hidden">
       {!showOffers ? (
@@ -73,9 +83,9 @@ const TransactionForm = () => {
           </div>
 
           <div className="p-4 space-y-6">
-            <div className="space-y-4">
+            <div className="space-y-4 relative">
               {/* From Currency Input */}
-              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100">
+              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100 mb-20">
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
                     I have
@@ -121,8 +131,18 @@ const TransactionForm = () => {
                 </div>
               </div>
 
+              {/* Swap Button */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pb-10">
+                <button
+                  onClick={handleSwapCurrencies}
+                  className="bg-white border border-gray-100 rounded-full p-2 hover:bg-gray-50 transition-colors shadow-sm"
+                >
+                  <ArrowUpDown size={20} className="text-gray-400" />
+                </button>
+              </div>
+
               {/* To Currency Input */}
-              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100">
+              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100 mt-12">
                 <div className="flex items-center space-x-4">
                   <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
                     I want
