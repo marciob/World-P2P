@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 
@@ -17,6 +17,29 @@ const TransactionForm = () => {
     color: "bg-blue-500",
   });
   const { isConnected } = useWallet();
+
+  const fromDropdownRef = useRef<HTMLDivElement>(null);
+  const toDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        fromDropdownRef.current &&
+        !fromDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCurrencyFrom(false);
+      }
+      if (
+        toDropdownRef.current &&
+        !toDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCurrencyTo(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const currencies = [
     { symbol: "USDT", color: "bg-teal-500" },
@@ -51,7 +74,7 @@ const TransactionForm = () => {
                 className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
                 placeholder="0.00"
               />
-              <div className="relative">
+              <div className="relative" ref={fromDropdownRef}>
                 <button
                   className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
                   onClick={() => setShowCurrencyFrom(!showCurrencyFrom)}
@@ -98,7 +121,7 @@ const TransactionForm = () => {
                 className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
                 placeholder="0.00"
               />
-              <div className="relative">
+              <div className="relative" ref={toDropdownRef}>
                 <button
                   className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
                   onClick={() => setShowCurrencyTo(!showCurrencyTo)}
@@ -144,7 +167,7 @@ const TransactionForm = () => {
         </button>
 
         <button className="w-full text-center text-gray-400 py-2 hover:text-gray-600 transition-colors">
-          See P2P list
+          See All Offers
         </button>
       </div>
     </div>
