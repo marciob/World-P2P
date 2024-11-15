@@ -11,9 +11,10 @@ const Map = ({ className }: MapProps) => {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
     null
   );
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -33,26 +34,35 @@ const Map = ({ className }: MapProps) => {
   }, []);
 
   useEffect(() => {
-    // Load Google Maps when the position is available
-    if (position && mapRef.current) {
-      const loadGoogleMaps = () => {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
-        script.defer = true;
-        script.async = true;
-        document.head.appendChild(script);
+    if (!position || !mapRef.current) return;
 
-        script.onload = () => {
-          new google.maps.Map(mapRef.current!, {
-            center: position,
-            zoom: 15,
-          });
-        };
+    const loadGoogleMaps = () => {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+      script.defer = true;
+      script.async = true;
+      document.head.appendChild(script);
+
+      script.onload = () => {
+        const newMap = new google.maps.Map(mapRef.current!, {
+          center: position,
+          zoom: 15,
+        });
+        setMap(newMap);
       };
+    };
 
-      loadGoogleMaps();
-    }
+    loadGoogleMaps();
   }, [position]);
+
+  const handleClick = () => {
+    setIsAnimating(true);
+
+    // Trigger animation and reset after delay
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 1000);
+  };
 
   if (error) {
     return <div className="text-red-500 text-center p-4">{error}</div>;
@@ -65,6 +75,25 @@ const Map = ({ className }: MapProps) => {
         className={`w-full h-full ${className}`}
         style={{ minHeight: "100vh" }}
       />
+      {/* Central button */}
+      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-10">
+        <button
+          className={`w-20 h-20 rounded-full bg-green-500 flex items-center justify-center 
+            shadow-lg transition-all duration-300 hover:bg-green-600 relative
+            ${isAnimating ? "scale-110" : ""}`}
+          onClick={handleClick}
+          aria-label="Money button"
+        >
+          <span
+            className={`text-4xl transition-transform duration-300
+            ${isAnimating ? "scale-125 animate-marker-glow-once" : ""}`}
+            role="img"
+            aria-label="money"
+          >
+            💸
+          </span>
+        </button>
+      </div>
     </div>
   );
 };
