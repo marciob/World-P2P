@@ -5,6 +5,11 @@ interface MapProps {
   className?: string;
 }
 
+interface FireMarker {
+  id: number;
+  position: google.maps.LatLng;
+}
+
 const Map = ({ className }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string>("");
@@ -12,7 +17,8 @@ const Map = ({ className }: MapProps) => {
     null
   );
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [fireMarkers, setFireMarkers] = useState<FireMarker[]>([]);
+  const markerId = useRef(0);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -56,12 +62,36 @@ const Map = ({ className }: MapProps) => {
   }, [position]);
 
   const handleClick = () => {
-    setIsAnimating(true);
+    if (!map || !position) return;
 
-    // Trigger animation and reset after delay
+    const markerIdCurrent = markerId.current++;
+
+    // Create a marker at the user's current location
+    const marker = new google.maps.Marker({
+      position: new google.maps.LatLng(position.lat, position.lng),
+      map: map,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 0, // Invisible, only using the label
+      },
+      label: {
+        text: "💸",
+        fontSize: "48px",
+        className: "marker-label animate-marker-glow-once", // Glow effect
+      },
+      optimized: false,
+    });
+
+    setFireMarkers((prev) => [
+      ...prev,
+      { id: markerIdCurrent, position: marker.getPosition()! },
+    ]);
+
+    // Remove marker after animation
     setTimeout(() => {
-      setIsAnimating(false);
-    }, 1000);
+      marker.setMap(null);
+      setFireMarkers((prev) => prev.filter((m) => m.id !== markerIdCurrent));
+    }, 2000);
   };
 
   if (error) {
@@ -79,14 +109,12 @@ const Map = ({ className }: MapProps) => {
       <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-10">
         <button
           className={`w-20 h-20 rounded-full bg-green-500 flex items-center justify-center 
-            shadow-lg transition-all duration-300 hover:bg-green-600 relative
-            ${isAnimating ? "scale-110" : ""}`}
+            shadow-lg transition-all duration-300 hover:bg-green-600 relative`}
           onClick={handleClick}
           aria-label="Money button"
         >
           <span
-            className={`text-4xl transition-transform duration-300
-            ${isAnimating ? "scale-125 animate-marker-glow-once" : ""}`}
+            className={`text-4xl transition-transform duration-300`}
             role="img"
             aria-label="money"
           >
