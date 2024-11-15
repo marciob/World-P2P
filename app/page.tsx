@@ -1,13 +1,19 @@
-import { PayBlock } from "@/components/Pay";
-import { SignIn } from "@/components/SignIn";
-import { VerifyBlock } from "@/components/Verify";
+"use client";
+import MobileCheck from "../components/MobileCheck";
+import Map from "../components/Map";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 gap-y-3">
-      <SignIn />
-      <VerifyBlock />
-      <PayBlock />
-    </main>
+    <MobileCheck>
+      <main className="relative min-h-screen">
+        <div className="relative w-full h-full">
+          <Map />
+        </div>
+        {/* World template components commented for now */}
+        {/* <SignIn /> */}
+        {/* <VerifyBlock /> */}
+        {/* <PayBlock /> */}
+      </main>
+    </MobileCheck>
   );
 }
