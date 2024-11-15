@@ -36,9 +36,7 @@ export default function LoginPage() {
       </section>
 
       <section className="relative z-10 w-full h-1/3 bg-white rounded-t-3xl p-6 flex flex-col items-center justify-center text-gray-900">
-        <p className="text-center text-xl mb-4">
-          P2P transactions for everyone!c
-        </p>
+        <p className="text-center text-xl mb-4">P2P s for everyone!c</p>
         <button
           onClick={handleLogin}
           className="bg-black text-white font-semibold text-lg py-3 px-8 rounded-lg shadow-md hover:bg-gray-800 transition mb-4"

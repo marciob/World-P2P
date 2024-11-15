@@ -1,9 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MobileCheck from "../components/MobileCheck";
 import Map from "../components/Map";
-import { useState } from "react";
+import TransactionPanel from "../components/TransactionPanel";
 
 export default function Home() {
   const router = useRouter();
@@ -44,26 +44,7 @@ export default function Home() {
           <Map addFireMarker={shouldAddMarker} isPanelOpen={isPanelOpen} />
         </div>
 
-        {/* Sliding Panel */}
-        <div
-          className={`fixed inset-x-0 bg-white/95 backdrop-blur-sm transition-all duration-300 ease-in-out z-20
-            ${isPanelOpen ? "bottom-0 h-[50%]" : "-bottom-full h-0"}`}
-        >
-          {/* Panel Handle */}
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-gray-300 rounded-full" />
-
-          {/* Panel Content */}
-          <div className="p-6 h-full overflow-y-auto">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Transaction
-            </h2>
-            <div className="space-y-4">
-              <div className="p-4 bg-white rounded-lg shadow">
-                <p className="text-gray-600">Panel content goes here...</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TransactionPanel isPanelOpen={isPanelOpen} />
 
         {/* Button container */}
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-30">
