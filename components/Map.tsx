@@ -122,6 +122,8 @@ const Map = ({
   useEffect(() => {
     if (addFireMarker && map && position) {
       const markerPosition = new google.maps.LatLng(position.lat, position.lng);
+
+      // Create marker
       const marker = new google.maps.Marker({
         position: markerPosition,
         map: map,
@@ -136,6 +138,42 @@ const Map = ({
         },
         optimized: false,
       });
+
+      // Add radar effect
+      const radarElement = document.createElement("div");
+      radarElement.className = "radar-circle animate-radar";
+      radarElement.style.position = "absolute";
+
+      const overlayProjection = new google.maps.OverlayView();
+      overlayProjection.onAdd = function () {
+        const panes = this.getPanes();
+        if (panes?.overlayLayer) {
+          panes.overlayLayer.appendChild(radarElement);
+        }
+      };
+
+      overlayProjection.onRemove = function () {
+        radarElement.parentNode?.removeChild(radarElement);
+      };
+
+      overlayProjection.draw = function () {
+        const projection = this.getProjection();
+        if (projection) {
+          const position = projection.fromLatLngToDivPixel(markerPosition);
+          if (position) {
+            radarElement.style.left = `${position.x}px`;
+            radarElement.style.top = `${position.y}px`;
+          }
+        }
+      };
+
+      overlayProjection.setMap(map);
+
+      // Remove marker and radar after animation
+      setTimeout(() => {
+        marker.setMap(null);
+        overlayProjection.setMap(null);
+      }, 2000);
     }
   }, [addFireMarker, map, position]);
 
