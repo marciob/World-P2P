@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       <section className="relative z-10 w-full h-1/3 bg-white rounded-t-3xl p-6 flex flex-col items-center justify-center text-gray-900">
         <p className="text-center text-xl mb-4">
-          P2P transactions for everyone!
+          P2P transactions for everyone!c
         </p>
         <button
           onClick={handleLogin}
