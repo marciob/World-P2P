@@ -1,151 +1,125 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useWallet } from "@/contexts/WalletContext";
 
 const TransactionForm = () => {
-  const [transactionType, setTransactionType] = useState("");
-  const [assetType, setAssetType] = useState("");
-  const [isTransactionOpen, setIsTransactionOpen] = useState(false);
-  const [isAssetOpen, setIsAssetOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [amount, setAmount] = useState("");
+  const [receiveAmount, setReceiveAmount] = useState("");
+  const [showCurrencyFrom, setShowCurrencyFrom] = useState(false);
+  const [showCurrencyTo, setShowCurrencyTo] = useState(false);
+  const { isConnected } = useWallet();
 
-  const transactionOptions = [
-    { value: "buy", label: "Buy 💵" },
-    { value: "sell", label: "Sell 💰" },
+  const currencies = [
+    { symbol: "USDT", color: "bg-teal-500" },
+    { symbol: "BTC", color: "bg-orange-500" },
+    { symbol: "ETH", color: "bg-purple-500" },
   ];
-
-  const assetOptions = [
-    { value: "cash", label: "Cash 💵" },
-    { value: "crypto", label: "Crypto ₿" },
-    { value: "gold", label: "Gold 🏆" },
-    { value: "stocks", label: "Stocks 📈" },
-  ];
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsTransactionOpen(false);
-        setIsAssetOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleTransactionSelect = (value: string) => {
-    setTransactionType(value);
-    setIsTransactionOpen(false);
-  };
-
-  const handleAssetSelect = (value: string) => {
-    setAssetType(value);
-    setIsAssetOpen(false);
-  };
-
-  const dropdownButtonClass = `
-    w-full p-4 bg-white rounded-xl border border-gray-200
-    cursor-pointer text-gray-700 flex justify-between items-center
-    hover:border-gray-300 transition-all duration-300
-  `;
-
-  const dropdownMenuClass = `
-    absolute top-full left-0 right-0 mt-2 py-2
-    bg-white rounded-xl border border-gray-200 shadow-lg
-    z-50 transition-all duration-300 transform
-  `;
-
-  const dropdownItemClass = `
-    px-4 py-3 text-gray-700
-    cursor-pointer transition-all duration-200
-    flex items-center hover:bg-green-50 
-    hover:text-green-600 hover:pl-6
-    active:scale-[0.98]
-  `;
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-        New Transaction
-      </h2>
-
-      <div className="space-y-4" ref={dropdownRef}>
-        <div className="flex gap-4">
-          <div className="flex-1 relative group">
-            <div
-              className={`${dropdownButtonClass} 
-                group-hover:border-green-200 group-hover:shadow-sm`}
-              onClick={() => setIsTransactionOpen(!isTransactionOpen)}
-            >
-              <span className="group-hover:text-green-600 transition-colors duration-200">
-                {transactionType || "Type"}
+    <div className="max-w-md mx-auto bg-white min-h-screen w-full overflow-hidden">
+      <div className="p-4 space-y-6">
+        <div className="space-y-4">
+          {/* From Currency Input */}
+          <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
+                I have
               </span>
-              <ChevronDownIcon
-                className={`w-5 h-5 text-gray-400 transition-transform duration-300
-                group-hover:text-green-500
-                ${isTransactionOpen ? "rotate-180" : ""}`}
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
+                placeholder="0.00"
               />
-            </div>
-            {isTransactionOpen && (
-              <div className={`${dropdownMenuClass} animate-fade-in`}>
-                {transactionOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={dropdownItemClass}
-                    onClick={() => handleTransactionSelect(option.value)}
-                  >
-                    {option.label}
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+                  onClick={() => setShowCurrencyFrom(!showCurrencyFrom)}
+                >
+                  <div className="w-6 h-6 bg-teal-500 rounded-full"></div>
+                  <span className="text-gray-700">USDT</span>
+                  <ChevronDown size={20} className="text-gray-400" />
+                </button>
+
+                {showCurrencyFrom && (
+                  <div className="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10">
+                    {currencies.map((currency) => (
+                      <button
+                        key={currency.symbol}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
+                        onClick={() => setShowCurrencyFrom(false)}
+                      >
+                        <div
+                          className={`w-6 h-6 ${currency.color} rounded-full`}
+                        ></div>
+                        <span>{currency.symbol}</span>
+                      </button>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="flex-1 relative group">
-            <div
-              className={`${dropdownButtonClass} 
-                group-hover:border-green-200 group-hover:shadow-sm`}
-              onClick={() => setIsAssetOpen(!isAssetOpen)}
-            >
-              <span className="group-hover:text-green-600 transition-colors duration-200">
-                {assetType || "Asset"}
+          {/* To Currency Input */}
+          <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
+                I want
               </span>
-              <ChevronDownIcon
-                className={`w-5 h-5 text-gray-400 transition-transform duration-300
-                group-hover:text-green-500
-                ${isAssetOpen ? "rotate-180" : ""}`}
+              <input
+                type="number"
+                value={receiveAmount}
+                onChange={(e) => setReceiveAmount(e.target.value)}
+                className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
+                placeholder="0.00"
               />
-            </div>
-            {isAssetOpen && (
-              <div className={`${dropdownMenuClass} animate-fade-in`}>
-                {assetOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={dropdownItemClass}
-                    onClick={() => handleAssetSelect(option.value)}
-                  >
-                    {option.label}
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+                  onClick={() => setShowCurrencyTo(!showCurrencyTo)}
+                >
+                  <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
+                  <span className="text-gray-700">ARS</span>
+                  <ChevronDown size={20} className="text-gray-400" />
+                </button>
+
+                {showCurrencyTo && (
+                  <div className="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10">
+                    {currencies.map((currency) => (
+                      <button
+                        key={currency.symbol}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
+                        onClick={() => setShowCurrencyTo(false)}
+                      >
+                        <div
+                          className={`w-6 h-6 ${currency.color} rounded-full`}
+                        ></div>
+                        <span>{currency.symbol}</span>
+                      </button>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {transactionType && assetType && (
-          <div className="animate-fade-in">
-            <button
-              className="w-full p-4 bg-green-500 text-white rounded-xl
-                transition-all duration-300 hover:bg-green-600 
-                active:scale-[0.98] font-medium"
-            >
-              Continue
-            </button>
-          </div>
-        )}
+        <button
+          className={`w-full font-bold py-4 rounded-xl mt-8 ${
+            isConnected
+              ? "bg-yellow-500 text-black hover:bg-yellow-400"
+              : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+          } transition-colors`}
+        >
+          {isConnected ? "Next" : "Connect Wallet"}
+        </button>
+
+        <button className="w-full text-center text-gray-400 py-2 hover:text-gray-600 transition-colors">
+          See All Offers
+        </button>
       </div>
     </div>
   );
