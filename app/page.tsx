@@ -1,12 +1,22 @@
 "use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import MobileCheck from "../components/MobileCheck";
 import Map from "../components/Map";
 import { useState } from "react";
 
 export default function Home() {
+  const router = useRouter();
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldAddMarker, setShouldAddMarker] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
+      router.push("/login");
+    }
+  }, [router]);
 
   const handleClick = () => {
     setIsAnimating(true);

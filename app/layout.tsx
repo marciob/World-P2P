@@ -4,8 +4,14 @@ import "./globals.css";
 import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
+import { Roboto } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,7 +30,7 @@ export default function RootLayout({
     }
   );
   return (
-    <html lang="en">
+    <html lang="en" className={roboto.className}>
       <NextAuthProvider>
         <ErudaProvider>
           <MiniKitProvider>
