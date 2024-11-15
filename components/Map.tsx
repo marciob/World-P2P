@@ -3,22 +3,25 @@ import { useEffect, useRef, useState } from "react";
 
 interface MapProps {
   className?: string;
+  onMapLoad?: (map: google.maps.Map) => void;
+  addFireMarker?: boolean;
+  isPanelOpen?: boolean;
 }
 
-interface FireMarker {
-  id: number;
-  position: google.maps.LatLng;
-}
-
-const Map = ({ className }: MapProps) => {
+const Map = ({
+  className,
+  onMapLoad,
+  addFireMarker,
+  isPanelOpen,
+}: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string>("");
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
     null
   );
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [fireMarkers, setFireMarkers] = useState<FireMarker[]>([]);
   const markerId = useRef(0);
+  const currentPosition = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -53,46 +56,107 @@ const Map = ({ className }: MapProps) => {
         const newMap = new google.maps.Map(mapRef.current!, {
           center: position,
           zoom: 15,
+          styles: [
+            {
+              elementType: "geometry",
+              stylers: [{ color: "#242f3e" }],
+            },
+            {
+              elementType: "labels.text.stroke",
+              stylers: [{ color: "#242f3e" }],
+            },
+            {
+              elementType: "labels.text.fill",
+              stylers: [{ color: "#746855" }],
+            },
+            {
+              featureType: "administrative.locality",
+              elementType: "labels.text.fill",
+              stylers: [{ color: "#d59563" }],
+            },
+            {
+              featureType: "road",
+              elementType: "geometry",
+              stylers: [{ color: "#38414e" }],
+            },
+            {
+              featureType: "road",
+              elementType: "geometry.stroke",
+              stylers: [{ color: "#212a37" }],
+            },
+            {
+              featureType: "road",
+              elementType: "labels.text.fill",
+              stylers: [{ color: "#9ca5b3" }],
+            },
+            {
+              featureType: "water",
+              elementType: "geometry",
+              stylers: [{ color: "#17263c" }],
+            },
+          ],
+          disableDefaultUI: true,
         });
+
+        new google.maps.Marker({
+          position: position,
+          map: newMap,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            fillColor: "#4285F4",
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 2,
+          },
+        });
+
         setMap(newMap);
+        if (onMapLoad) onMapLoad(newMap);
       };
     };
 
     loadGoogleMaps();
-  }, [position]);
+  }, [position, onMapLoad]);
 
-  const handleClick = () => {
-    if (!map || !position) return;
+  useEffect(() => {
+    if (addFireMarker && map && position) {
+      const markerPosition = new google.maps.LatLng(position.lat, position.lng);
+      const marker = new google.maps.Marker({
+        position: markerPosition,
+        map: map,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        },
+        label: {
+          text: "💸",
+          fontSize: "48px",
+          className: "marker-label animate-marker-glow-once",
+        },
+        optimized: false,
+      });
+    }
+  }, [addFireMarker, map, position]);
 
-    const markerIdCurrent = markerId.current++;
+  useEffect(() => {
+    if (map && position && isPanelOpen !== undefined) {
+      currentPosition.current = position;
+      google.maps.event.trigger(map, "resize");
 
-    // Create a marker at the user's current location
-    const marker = new google.maps.Marker({
-      position: new google.maps.LatLng(position.lat, position.lng),
-      map: map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 0, // Invisible, only using the label
-      },
-      label: {
-        text: "💸",
-        fontSize: "48px",
-        className: "marker-label animate-marker-glow-once", // Glow effect
-      },
-      optimized: false,
-    });
+      const screenHeight = window.innerHeight;
+      const panelHeight = screenHeight * 0.5;
+      const latOffset = isPanelOpen ? (panelHeight / screenHeight) * 0.008 : 0;
 
-    setFireMarkers((prev) => [
-      ...prev,
-      { id: markerIdCurrent, position: marker.getPosition()! },
-    ]);
+      const center = new google.maps.LatLng(
+        position.lat + latOffset,
+        position.lng
+      );
 
-    // Remove marker after animation
-    setTimeout(() => {
-      marker.setMap(null);
-      setFireMarkers((prev) => prev.filter((m) => m.id !== markerIdCurrent));
-    }, 2000);
-  };
+      map.panTo(center);
+      map.setZoom(isPanelOpen ? 15.5 : 15);
+    }
+  }, [map, position, isPanelOpen]);
 
   if (error) {
     return <div className="text-red-500 text-center p-4">{error}</div>;
@@ -103,25 +167,11 @@ const Map = ({ className }: MapProps) => {
       <div
         ref={mapRef}
         className={`w-full h-full ${className}`}
-        style={{ minHeight: "100vh" }}
+        style={{
+          minHeight: isPanelOpen ? "50vh" : "100vh",
+          transition: "all 0.3s ease-in-out",
+        }}
       />
-      {/* Central button */}
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-10">
-        <button
-          className={`w-20 h-20 rounded-full bg-green-500 flex items-center justify-center 
-            shadow-lg transition-all duration-300 hover:bg-green-600 relative`}
-          onClick={handleClick}
-          aria-label="Money button"
-        >
-          <span
-            className={`text-4xl transition-transform duration-300`}
-            role="img"
-            aria-label="money"
-          >
-            💸
-          </span>
-        </button>
-      </div>
     </div>
   );
 };
