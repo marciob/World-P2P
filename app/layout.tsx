@@ -9,7 +9,7 @@ import { WalletProvider } from "@/contexts/WalletContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "El Dorado Exchange",
+  title: "Cashing",
   description: "P2P Exchange Platform",
 };
 

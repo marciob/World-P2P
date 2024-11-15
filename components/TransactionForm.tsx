@@ -8,6 +8,14 @@ const TransactionForm = () => {
   const [receiveAmount, setReceiveAmount] = useState("");
   const [showCurrencyFrom, setShowCurrencyFrom] = useState(false);
   const [showCurrencyTo, setShowCurrencyTo] = useState(false);
+  const [selectedFromCurrency, setSelectedFromCurrency] = useState({
+    symbol: "USDT",
+    color: "bg-teal-500",
+  });
+  const [selectedToCurrency, setSelectedToCurrency] = useState({
+    symbol: "THB",
+    color: "bg-blue-500",
+  });
   const { isConnected } = useWallet();
 
   const currencies = [
@@ -15,6 +23,16 @@ const TransactionForm = () => {
     { symbol: "BTC", color: "bg-orange-500" },
     { symbol: "ETH", color: "bg-purple-500" },
   ];
+
+  const handleFromCurrencySelect = (currency: typeof currencies[0]) => {
+    setSelectedFromCurrency(currency);
+    setShowCurrencyFrom(false);
+  };
+
+  const handleToCurrencySelect = (currency: typeof currencies[0]) => {
+    setSelectedToCurrency(currency);
+    setShowCurrencyTo(false);
+  };
 
   return (
     <div className="max-w-md mx-auto bg-white min-h-screen w-full overflow-hidden">
@@ -38,8 +56,12 @@ const TransactionForm = () => {
                   className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
                   onClick={() => setShowCurrencyFrom(!showCurrencyFrom)}
                 >
-                  <div className="w-6 h-6 bg-teal-500 rounded-full"></div>
-                  <span className="text-gray-700">USDT</span>
+                  <div
+                    className={`w-6 h-6 ${selectedFromCurrency.color} rounded-full`}
+                  ></div>
+                  <span className="text-gray-700">
+                    {selectedFromCurrency.symbol}
+                  </span>
                   <ChevronDown size={20} className="text-gray-400" />
                 </button>
 
@@ -49,7 +71,7 @@ const TransactionForm = () => {
                       <button
                         key={currency.symbol}
                         className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
-                        onClick={() => setShowCurrencyFrom(false)}
+                        onClick={() => handleFromCurrencySelect(currency)}
                       >
                         <div
                           className={`w-6 h-6 ${currency.color} rounded-full`}
@@ -81,8 +103,12 @@ const TransactionForm = () => {
                   className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
                   onClick={() => setShowCurrencyTo(!showCurrencyTo)}
                 >
-                  <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
-                  <span className="text-gray-700">ARS</span>
+                  <div
+                    className={`w-6 h-6 ${selectedToCurrency.color} rounded-full`}
+                  ></div>
+                  <span className="text-gray-700">
+                    {selectedToCurrency.symbol}
+                  </span>
                   <ChevronDown size={20} className="text-gray-400" />
                 </button>
 
@@ -92,7 +118,7 @@ const TransactionForm = () => {
                       <button
                         key={currency.symbol}
                         className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
-                        onClick={() => setShowCurrencyTo(false)}
+                        onClick={() => handleToCurrencySelect(currency)}
                       >
                         <div
                           className={`w-6 h-6 ${currency.color} rounded-full`}
@@ -118,7 +144,7 @@ const TransactionForm = () => {
         </button>
 
         <button className="w-full text-center text-gray-400 py-2 hover:text-gray-600 transition-colors">
-          See All Offers
+          See P2P list
         </button>
       </div>
     </div>
