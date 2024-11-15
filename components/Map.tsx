@@ -8,6 +8,11 @@ interface MapProps {
   isPanelOpen?: boolean;
 }
 
+interface FireMarker {
+  id: number;
+  position: google.maps.LatLng;
+}
+
 const Map = ({
   className,
   onMapLoad,
@@ -20,27 +25,54 @@ const Map = ({
     null
   );
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [fireMarkers, setFireMarkers] = useState<FireMarker[]>([]);
   const markerId = useRef(0);
   const currentPosition = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        (position) => {
           setPosition({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
           });
         },
-        (err) => {
+        (error) => {
           setError("Unable to retrieve your location");
-          console.error(err);
+          console.error(error);
         }
       );
     } else {
       setError("Geolocation is not supported by your browser");
     }
   }, []);
+
+  useEffect(() => {
+    if (addFireMarker && map && position) {
+      const newMarker: FireMarker = {
+        id: markerId.current++,
+        position: new google.maps.LatLng(position.lat, position.lng),
+      };
+
+      const marker = new google.maps.Marker({
+        position: newMarker.position,
+        map: map,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 0,
+        },
+        label: {
+          text: "💸",
+          fontSize: "48px",
+          className: "marker-label animate-marker-glow-once",
+        },
+        optimized: false,
+      });
+
+      setFireMarkers((prev) => [...prev, newMarker]);
+    }
+  }, [addFireMarker, map, position]);
 
   useEffect(() => {
     if (!position || !mapRef.current) return;
@@ -120,77 +152,24 @@ const Map = ({
   }, [position, onMapLoad]);
 
   useEffect(() => {
-    if (addFireMarker && map && position) {
-      const markerPosition = new google.maps.LatLng(position.lat, position.lng);
-
-      // Create marker
-      const marker = new google.maps.Marker({
-        position: markerPosition,
-        map: map,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 0,
-        },
-        label: {
-          text: "💸",
-          fontSize: "48px",
-          className: "marker-label animate-marker-glow-once",
-        },
-        optimized: false,
-      });
-
-      // Add radar effect
-      const radarElement = document.createElement("div");
-      radarElement.className = "radar-circle animate-radar";
-      radarElement.style.position = "absolute";
-
-      const overlayProjection = new google.maps.OverlayView();
-      overlayProjection.onAdd = function () {
-        const panes = this.getPanes();
-        if (panes?.overlayLayer) {
-          panes.overlayLayer.appendChild(radarElement);
-        }
-      };
-
-      overlayProjection.onRemove = function () {
-        radarElement.parentNode?.removeChild(radarElement);
-      };
-
-      overlayProjection.draw = function () {
-        const projection = this.getProjection();
-        if (projection) {
-          const position = projection.fromLatLngToDivPixel(markerPosition);
-          if (position) {
-            radarElement.style.left = `${position.x}px`;
-            radarElement.style.top = `${position.y}px`;
-          }
-        }
-      };
-
-      overlayProjection.setMap(map);
-
-      // Remove marker and radar after animation
-      setTimeout(() => {
-        marker.setMap(null);
-        overlayProjection.setMap(null);
-      }, 2000);
-    }
-  }, [addFireMarker, map, position]);
-
-  useEffect(() => {
     if (map && position && isPanelOpen !== undefined) {
       currentPosition.current = position;
+
       google.maps.event.trigger(map, "resize");
 
+      // Increased offset calculation to show user location above panel
       const screenHeight = window.innerHeight;
-      const panelHeight = screenHeight * 0.5;
-      const latOffset = isPanelOpen ? (panelHeight / screenHeight) * 0.008 : 0;
+      const panelHeight = screenHeight * 0.5; // 50% of screen height
+      const latOffset = isPanelOpen
+        ? (panelHeight / screenHeight) * 0.008 // Increased multiplier from 0.003 to 0.008
+        : 0;
 
       const center = new google.maps.LatLng(
         position.lat + latOffset,
         position.lng
       );
 
+      // Add smooth transition to the map movement
       map.panTo(center);
       map.setZoom(isPanelOpen ? 15.5 : 15);
     }
