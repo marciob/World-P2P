@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Wallet2, ArrowUpDown } from "lucide-react";
-import { useWallet } from "@/contexts/WalletContext";
+import { useWallet } from "@/components/wallet/context/WalletContext";
 import OffersList from "./OffersList";
 import NumberKeyboard from "./NumberKeyboard";
 import CurrencySelect from "./CurrencySelect";
@@ -20,6 +20,10 @@ const currencies: Currency[] = [
   { symbol: "THB", color: "bg-green-500" },
 ];
 
+const shortenAddress = (address: string) => {
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
+
 const TransactionForm = () => {
   const [amount, setAmount] = useState("");
   const [receiveAmount, setReceiveAmount] = useState("");
@@ -33,9 +37,33 @@ const TransactionForm = () => {
     symbol: "THB",
     color: "bg-green-500",
   });
-  const { isConnected } = useWallet();
+  const {
+    isConnected,
+    address,
+    connectWallet,
+    disconnectWallet,
+    isDropdownOpen,
+    setIsDropdownOpen,
+  } = useWallet();
   const [showOffers, setShowOffers] = useState(false);
   const sendInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setIsDropdownOpen]);
 
   const handleSwapCurrencies = () => {
     const tempCurrency = selectedFromCurrency;
@@ -72,13 +100,58 @@ const TransactionForm = () => {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 border-b border-gray-100">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                <Wallet2 className="w-5 h-5 text-gray-400" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                  <Wallet2 className="w-5 h-5 text-gray-400" />
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  P2P Transactions
+                </h2>
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                P2P Transactions
-              </h2>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isConnected) {
+                      connectWallet();
+                    } else {
+                      setIsDropdownOpen(!isDropdownOpen);
+                    }
+                  }}
+                  onMouseEnter={() => isConnected && setIsDropdownOpen(true)}
+                  className="px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  {isConnected && address ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      {shortenAddress(address)}
+                    </span>
+                  ) : (
+                    "Connect"
+                  )}
+                </button>
+
+                {isConnected && isDropdownOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                    onMouseLeave={() => setIsDropdownOpen(false)}
+                  >
+                    <div className="py-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          disconnectWallet();
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Disconnect Wallet
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -144,8 +217,13 @@ const TransactionForm = () => {
 
             {/* Action Buttons */}
             <div className="space-y-4">
-              <button className="w-full py-4 px-6 rounded-xl font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors">
-                {isConnected ? "Next" : "Connect Wallet"}
+              <button
+                onClick={() =>
+                  isConnected ? setShowOffers(true) : connectWallet()
+                }
+                className="w-full py-4 px-6 rounded-xl font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              >
+                {isConnected ? "Send" : "Connect"}
               </button>
 
               <button

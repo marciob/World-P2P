@@ -4,7 +4,7 @@ import "./globals.css";
 import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
-import { WalletProvider } from "@/contexts/WalletContext";
+import { ClientProvider } from "@/components/wallet/provider/ClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,17 +25,17 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <NextAuthProvider>
-        <ErudaProvider>
-          <MiniKitProvider>
-            <WalletProvider>
-              <body className={`${inter.className} bg-gray-900 text-white`}>
-                {children}
-              </body>
-            </WalletProvider>
-          </MiniKitProvider>
-        </ErudaProvider>
-      </NextAuthProvider>
+      <body className={inter.className}>
+        <NextAuthProvider>
+          <ErudaProvider>
+            <MiniKitProvider>
+              <ClientProvider>
+                <div className="bg-gray-900 text-white">{children}</div>
+              </ClientProvider>
+            </MiniKitProvider>
+          </ErudaProvider>
+        </NextAuthProvider>
+      </body>
     </html>
   );
 }
