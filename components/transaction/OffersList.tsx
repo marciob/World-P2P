@@ -73,6 +73,12 @@ const OffersList = () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between px-4">
+        <button
+          onClick={() => window.history.back()}
+          className="text-gray-500 hover:text-gray-700 transition-colors text-sm"
+        >
+          ← Back
+        </button>
         <div className="flex items-center px-3 py-1 border border-blue-200 rounded-full text-blue-500 text-sm">
           <AlertCircle className="w-4 h-4 mr-1" />
           Best Prices
