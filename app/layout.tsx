@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "P2P Platform",
 };
 
-export default function RootLayout({
+function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -24,13 +24,15 @@ export default function RootLayout({
   );
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className="overflow-x-hidden">
+      <body className={`${inter.className} overflow-x-hidden`}>
         <NextAuthProvider>
           <ErudaProvider>
             <MiniKitProvider>
               <ClientProvider>
-                <div className="bg-gray-900 text-white">{children}</div>
+                <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
+                  {children}
+                </div>
               </ClientProvider>
             </MiniKitProvider>
           </ErudaProvider>
@@ -39,3 +41,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

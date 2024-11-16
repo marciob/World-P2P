@@ -95,7 +95,7 @@ const TransactionForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen w-full flex flex-col">
+    <div className="w-full bg-white min-h-screen flex flex-col">
       {!showOffers ? (
         <div className="flex flex-col h-full">
           {/* Header */}
