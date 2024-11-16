@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +12,12 @@ export default function LoginPage() {
     e.preventDefault();
     signIn("worldcoin");
     localStorage.setItem("isLoggedIn", "true");
+  };
+
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    localStorage.setItem("isSkipped", "true");
+    window.location.href = "/";
   };
 
   useEffect(() => {
@@ -40,16 +46,18 @@ export default function LoginPage() {
       </section>
 
       <section className="relative z-10 w-full h-1/3 bg-white rounded-t-3xl p-6 flex flex-col items-center justify-center text-gray-900">
-        <p className="text-center text-xl mb-4">P2P s for everyone!c</p>
+        <p className="text-center text-xl mb-4">P2P s for everyone!</p>
         <button
           onClick={handleLogin}
-          className="bg-black text-white font-semibold text-lg py-3 px-8 rounded-lg shadow-md hover:bg-gray-800 transition mb-4"
+          className="bg-black text-white font-semibold text-lg py-3 px-8 rounded-lg shadow-md 
+          hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 active:scale-95 mb-4"
         >
           Sign In
         </button>
         <button
-          onClick={handleLogin}
-          className="text-gray-600 hover:text-gray-800 transition text-lg"
+          onClick={handleSkip}
+          className="text-gray-600 hover:text-gray-800 transition-all duration-300 transform 
+          hover:scale-105 active:scale-95 text-lg"
         >
           Skip for now
         </button>
