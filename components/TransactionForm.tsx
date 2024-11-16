@@ -1,27 +1,33 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, User, ArrowUpDown } from "lucide-react";
+import { ChevronDown, User, ArrowUpDown, Wallet2 } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import OffersList from "./OffersList";
+
+type Currency = {
+  symbol: string;
+  color: string;
+};
 
 const TransactionForm = () => {
   const [amount, setAmount] = useState("");
   const [receiveAmount, setReceiveAmount] = useState("");
   const [showCurrencyFrom, setShowCurrencyFrom] = useState(false);
   const [showCurrencyTo, setShowCurrencyTo] = useState(false);
-  const [selectedFromCurrency, setSelectedFromCurrency] = useState({
+  const [selectedFromCurrency, setSelectedFromCurrency] = useState<Currency>({
     symbol: "USDT",
     color: "bg-teal-500",
   });
-  const [selectedToCurrency, setSelectedToCurrency] = useState({
+  const [selectedToCurrency, setSelectedToCurrency] = useState<Currency>({
     symbol: "THB",
-    color: "bg-blue-500",
+    color: "bg-green-500",
   });
   const { isConnected } = useWallet();
   const [showOffers, setShowOffers] = useState(false);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
+  const sendInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,18 +49,20 @@ const TransactionForm = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const currencies = [
-    { symbol: "USDT", color: "bg-teal-500" },
+  const currencies: Currency[] = [
     { symbol: "BTC", color: "bg-orange-500" },
     { symbol: "ETH", color: "bg-purple-500" },
+    { symbol: "USDC", color: "bg-blue-500" },
+    { symbol: "USDT", color: "bg-teal-500" },
+    { symbol: "THB", color: "bg-green-500" },
   ];
 
-  const handleFromCurrencySelect = (currency: typeof currencies[0]) => {
+  const handleFromCurrencySelect = (currency: Currency) => {
     setSelectedFromCurrency(currency);
     setShowCurrencyFrom(false);
   };
 
-  const handleToCurrencySelect = (currency: typeof currencies[0]) => {
+  const handleToCurrencySelect = (currency: Currency) => {
     setSelectedToCurrency(currency);
     setShowCurrencyTo(false);
   };
@@ -70,116 +78,77 @@ const TransactionForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen w-full overflow-hidden">
+    <div className="max-w-md mx-auto bg-white min-h-screen w-full">
       {!showOffers ? (
-        <>
+        <div className="flex flex-col h-full">
+          {/* Header */}
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <User className="w-6 h-6 text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                <Wallet2 className="w-5 h-5 text-gray-400" />
               </div>
-              <div className="text-sm text-gray-500">Guest</div>
+              <h2 className="text-lg font-semibold text-gray-800">
+                P2P Transactions
+              </h2>
             </div>
           </div>
 
-          <div className="p-4 space-y-6">
-            <div className="space-y-4 relative">
-              {/* From Currency Input */}
-              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100 mb-20">
+          {/* Main Form */}
+          <div className="p-6 flex-1 space-y-8">
+            {/* From Currency Section */}
+            <div className="relative">
+              <label className="text-sm font-medium text-gray-600 mb-2 block">
+                You Send
+              </label>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:border-gray-300 transition-colors">
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
-                    I have
-                  </span>
                   <input
+                    ref={sendInputRef}
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
+                    className="flex-1 bg-transparent text-lg focus:outline-none rounded-lg p-2 text-gray-700"
                     placeholder="0.00"
+                    autoFocus
                   />
                   <div className="relative" ref={fromDropdownRef}>
                     <button
-                      className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+                      className="flex items-center space-x-2 bg-gray-200 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors"
                       onClick={() => setShowCurrencyFrom(!showCurrencyFrom)}
                     >
                       <div
                         className={`w-6 h-6 ${selectedFromCurrency.color} rounded-full`}
-                      ></div>
-                      <span className="text-gray-700">
+                      />
+                      <span className="font-medium text-gray-900">
                         {selectedFromCurrency.symbol}
                       </span>
-                      <ChevronDown size={20} className="text-gray-400" />
+                      <ChevronDown className="w-4 h-4 text-gray-700" />
                     </button>
 
+                    {/* From  */}
                     {showCurrencyFrom && (
-                      <div className="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10">
+                      <div className="absolute right-0 mt-2 w-48 bg-gray-50 rounded-xl shadow-xl border border-gray-200 py-2 z-10">
+                        <div className="px-3 py-2 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">
+                            Select Currency
+                          </span>
+                        </div>
                         {currencies.map((currency) => (
                           <button
                             key={currency.symbol}
-                            className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
+                            className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center space-x-2 transition-colors duration-150"
                             onClick={() => handleFromCurrencySelect(currency)}
                           >
                             <div
                               className={`w-6 h-6 ${currency.color} rounded-full`}
-                            ></div>
-                            <span>{currency.symbol}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Swap Button */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pb-10">
-                <button
-                  onClick={handleSwapCurrencies}
-                  className="bg-white border border-gray-100 rounded-full p-2 hover:bg-gray-50 transition-colors shadow-sm"
-                >
-                  <ArrowUpDown size={20} className="text-gray-400" />
-                </button>
-              </div>
-
-              {/* To Currency Input */}
-              <div className="bg-gray-50 rounded-xl p-4 relative border border-gray-100 mt-12">
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-500 whitespace-nowrap min-w-[3rem]">
-                    I want
-                  </span>
-                  <input
-                    type="number"
-                    value={receiveAmount}
-                    onChange={(e) => setReceiveAmount(e.target.value)}
-                    className="bg-gray-50 px-3 py-2 rounded-lg w-[120px] text-right focus:outline-none focus:ring-1 focus:ring-yellow-500 text-gray-700"
-                    placeholder="0.00"
-                  />
-                  <div className="relative" ref={toDropdownRef}>
-                    <button
-                      className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition-colors"
-                      onClick={() => setShowCurrencyTo(!showCurrencyTo)}
-                    >
-                      <div
-                        className={`w-6 h-6 ${selectedToCurrency.color} rounded-full`}
-                      ></div>
-                      <span className="text-gray-700">
-                        {selectedToCurrency.symbol}
-                      </span>
-                      <ChevronDown size={20} className="text-gray-400" />
-                    </button>
-
-                    {showCurrencyTo && (
-                      <div className="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-10">
-                        {currencies.map((currency) => (
-                          <button
-                            key={currency.symbol}
-                            className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 text-gray-700"
-                            onClick={() => handleToCurrencySelect(currency)}
-                          >
-                            <div
-                              className={`w-6 h-6 ${currency.color} rounded-full`}
-                            ></div>
-                            <span>{currency.symbol}</span>
+                            />
+                            <span className="font-medium text-gray-800">
+                              {currency.symbol}
+                            </span>
+                            {currency.symbol ===
+                              selectedFromCurrency.symbol && (
+                              <span className="ml-auto text-blue-500">✓</span>
+                            )}
                           </button>
                         ))}
                       </div>
@@ -189,30 +158,102 @@ const TransactionForm = () => {
               </div>
             </div>
 
-            <button
-              className={`w-full font-bold py-4 rounded-xl mt-8 ${
-                isConnected
-                  ? "bg-yellow-500 text-black hover:bg-yellow-400"
-                  : "bg-gray-100 text-gray-400 hover:bg-gray-200"
-              } transition-colors`}
-            >
-              {isConnected ? "Next" : "Connect Wallet"}
-            </button>
+            {/* Swap Button */}
+            <div className="flex justify-center -my-4">
+              <button
+                onClick={handleSwapCurrencies}
+                className="w-10 h-10 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                <ArrowUpDown className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
 
-            <button
-              onClick={() => setShowOffers(true)}
-              className="w-full text-center text-gray-400 py-2 hover:text-gray-600 transition-colors"
-            >
-              See All Offers
-            </button>
+            {/* To Currency Section */}
+            <div className="relative">
+              <label className="text-sm font-medium text-gray-600 mb-2 block">
+                You Receive
+              </label>
+              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:border-gray-300 transition-colors">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="number"
+                    value={receiveAmount}
+                    onChange={(e) => setReceiveAmount(e.target.value)}
+                    className="flex-1 bg-transparent text-lg focus:outline-none rounded-lg p-2 text-gray-700"
+                    placeholder="0.00"
+                  />
+                  <div className="relative" ref={toDropdownRef}>
+                    <button
+                      className="flex items-center space-x-2 bg-gray-200 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors"
+                      onClick={() => setShowCurrencyTo(!showCurrencyTo)}
+                    >
+                      <div
+                        className={`w-6 h-6 ${selectedToCurrency.color} rounded-full`}
+                      />
+                      <span className="font-medium text-gray-900">
+                        {selectedToCurrency.symbol}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-gray-700" />
+                    </button>
+
+                    {showCurrencyTo && (
+                      <div className="absolute right-0 mt-2 w-48 bg-gray-50 rounded-xl shadow-xl border border-gray-200 py-2 z-10">
+                        <div className="px-3 py-2 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-600">
+                            Select Currency
+                          </span>
+                        </div>
+                        {currencies.map((currency) => (
+                          <button
+                            key={currency.symbol}
+                            className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center space-x-2 transition-colors duration-150"
+                            onClick={() => handleToCurrencySelect(currency)}
+                          >
+                            <div
+                              className={`w-6 h-6 ${currency.color} rounded-full`}
+                            />
+                            <span className="font-medium text-gray-800">
+                              {currency.symbol}
+                            </span>
+                            {currency.symbol === selectedToCurrency.symbol && (
+                              <span className="ml-auto text-blue-500">✓</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-4">
+              <button
+                className={`w-full py-4 px-6 rounded-xl font-medium transition-colors ${
+                  isConnected
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : "bg-gray-100 text-gray-400 hover:bg-gray-200"
+                }`}
+              >
+                {isConnected ? "Next" : "Connect Wallet"}
+              </button>
+
+              <button
+                onClick={() => setShowOffers(true)}
+                className="w-full py-4 text-gray-500 hover:text-gray-700 transition-colors font-medium"
+              >
+                See All Offers
+              </button>
+            </div>
           </div>
-        </>
+        </div>
       ) : (
         <>
           <div className="p-4 border-b border-gray-100">
             <button
               onClick={() => setShowOffers(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 font-medium"
             >
               ← Back to Exchange
             </button>
