@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-black bg-opacity-50" />
 
       <section className="flex-grow flex items-center justify-center relative z-10">
-        <h1 className="text-6xl font-bold text-center">Welcome to Cashing</h1>
+        <h1 className="text-6xl font-bold text-center">Welcome to World P2P</h1>
       </section>
 
       <section className="relative z-10 w-full h-1/3 bg-white rounded-t-3xl p-6 flex flex-col items-center justify-center text-gray-900">
