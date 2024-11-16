@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, ArrowUpDown, Wallet2 } from "lucide-react";
 import { useWallet } from "@/contexts/WalletContext";
 import OffersList from "./OffersList";
+import NumberKeyboard from "@/components/NumberKeyboard";
 
 type Currency = {
   symbol: string;
@@ -77,8 +78,27 @@ const TransactionForm = () => {
     setReceiveAmount(tempAmount);
   };
 
+  const handleNumberClick = (value: string) => {
+    if (value === "." && amount.includes(".")) return;
+
+    if (value !== "." && amount.includes(".")) {
+      const decimalPlaces = amount.split(".")[1];
+      if (decimalPlaces && decimalPlaces.length >= 8) return;
+    }
+
+    setAmount((prev) => prev + value);
+  };
+
+  const handleBackspace = () => {
+    setAmount((prev) => prev.slice(0, -1));
+  };
+
+  const handleClear = () => {
+    setAmount("");
+  };
+
   return (
-    <div className="max-w-md mx-auto bg-white min-h-screen w-full">
+    <div className="max-w-md mx-auto bg-white min-h-screen w-full flex flex-col">
       {!showOffers ? (
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -246,6 +266,14 @@ const TransactionForm = () => {
                 See All Offers
               </button>
             </div>
+          </div>
+
+          <div className="mt-auto">
+            <NumberKeyboard
+              onNumberClick={handleNumberClick}
+              onBackspace={handleBackspace}
+              onClear={handleClear}
+            />
           </div>
         </div>
       ) : (
