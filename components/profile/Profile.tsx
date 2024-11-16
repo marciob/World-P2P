@@ -10,6 +10,7 @@ import {
   LogOut,
 } from "lucide-react";
 import Identicon from "../common/Identicon";
+import { signOut } from "next-auth/react";
 
 interface Transaction {
   pair: string;
@@ -25,6 +26,11 @@ interface ProfileProps {
 
 const Profile = ({ onBack, address }: ProfileProps) => {
   const [activeTab, setActiveTab] = useState("balance");
+
+  const handleLogout = () => {
+    console.log("logout");
+    signOut();
+  };
 
   const mockTransactions: Transaction[] = [
     {
@@ -206,7 +212,7 @@ const Profile = ({ onBack, address }: ProfileProps) => {
         </button>
 
         <button className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
-          <div className="flex items-center">
+          <div className="flex items-center" onClick={handleLogout}>
             <LogOut className="w-5 h-5 text-gray-600 mr-3" />
             <span>Logout from World ID</span>
           </div>

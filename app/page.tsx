@@ -9,6 +9,7 @@ import LoginPage from "./login/page";
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
+  console.log("session ", session);
   const [isSkipped, setIsSkipped] = useState(false);
 
   useEffect(() => {
