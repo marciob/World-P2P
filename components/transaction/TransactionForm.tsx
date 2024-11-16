@@ -6,6 +6,7 @@ import OffersList from "./OffersList";
 import NumberKeyboard from "./NumberKeyboard";
 import CurrencySelect from "./CurrencySelect";
 import AmountInput from "./AmountInput";
+import { fetchExchangeRates, ExchangeRates } from "@/services/api/currency";
 
 type Currency = {
   symbol: string;
@@ -13,11 +14,9 @@ type Currency = {
 };
 
 const currencies: Currency[] = [
-  { symbol: "BTC", color: "bg-orange-500" },
-  { symbol: "ETH", color: "bg-purple-500" },
-  { symbol: "USDC", color: "bg-blue-500" },
   { symbol: "USDT", color: "bg-teal-500" },
   { symbol: "THB", color: "bg-green-500" },
+  { symbol: "EUR", color: "bg-blue-500" },
 ];
 
 const shortenAddress = (address: string) => {
@@ -49,6 +48,8 @@ const TransactionForm = () => {
   const sendInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [mockBalance, setMockBalance] = useState("1,000.00");
+  const [rates, setRates] = useState<ExchangeRates | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,6 +66,53 @@ const TransactionForm = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [setIsDropdownOpen]);
+
+  useEffect(() => {
+    const fetchRates = async () => {
+      setIsLoading(true);
+      try {
+        const base =
+          selectedFromCurrency.symbol === "USDT"
+            ? "USD"
+            : selectedFromCurrency.symbol;
+        const ratesData = await fetchExchangeRates(base);
+        setRates(ratesData);
+      } catch (error) {
+        console.error("Error fetching rates:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRates();
+  }, [selectedFromCurrency.symbol]);
+
+  useEffect(() => {
+    if (!amount || !rates) {
+      setReceiveAmount("");
+      return;
+    }
+
+    try {
+      const numAmount = parseFloat(amount);
+      if (isNaN(numAmount)) {
+        setReceiveAmount("");
+        return;
+      }
+
+      const toSymbol =
+        selectedToCurrency.symbol === "USDT"
+          ? "USD"
+          : selectedToCurrency.symbol;
+      const rate = rates.rates[toSymbol] || 1;
+
+      const converted = (numAmount * rate).toFixed(2);
+      setReceiveAmount(converted);
+    } catch (error) {
+      console.error("Error converting amount:", error);
+      setReceiveAmount("");
+    }
+  }, [amount, rates, selectedToCurrency.symbol]);
 
   const handleSwapCurrencies = () => {
     const tempCurrency = selectedFromCurrency;
