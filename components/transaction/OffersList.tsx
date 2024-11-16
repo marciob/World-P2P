@@ -1,10 +1,11 @@
 "use client";
 import { Star, ArrowRight, MessageCircle, AlertCircle } from "lucide-react";
+import Identicon from "../common/Identicon";
 
 type Offer = {
   id: string;
   user: {
-    name: string;
+    address: string;
     rating: number;
     trades: number;
   };
@@ -21,7 +22,7 @@ const mockOffers: Offer[] = [
   {
     id: "1",
     user: {
-      name: "John Trader",
+      address: "0x1234567890abcdef1234567890abcdef12345678",
       rating: 4.8,
       trades: 123,
     },
@@ -36,7 +37,7 @@ const mockOffers: Offer[] = [
   {
     id: "2",
     user: {
-      name: "Alice Crypto",
+      address: "0xabcdef1234567890abcdef1234567890abcdef12",
       rating: 4.9,
       trades: 256,
     },
@@ -51,7 +52,7 @@ const mockOffers: Offer[] = [
   {
     id: "3",
     user: {
-      name: "Bob Exchange",
+      address: "0x7890abcdef1234567890abcdef1234567890abcd",
       rating: 4.7,
       trades: 89,
     },
@@ -65,6 +66,10 @@ const mockOffers: Offer[] = [
   },
 ];
 
+const shortenAddress = (address: string) => {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
 const OffersList = () => {
   return (
     <div className="space-y-4">
@@ -76,12 +81,12 @@ const OffersList = () => {
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-semibold text-lg">
-                  {offer.user.name[0]}
+                <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                  <Identicon value={offer.user.address} size={48} />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">
-                    {offer.user.name}
+                    {shortenAddress(offer.user.address)}
                   </h3>
                   <div className="flex items-center space-x-2 text-sm">
                     <div className="flex items-center text-yellow-500">
