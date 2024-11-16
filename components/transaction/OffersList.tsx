@@ -1,5 +1,5 @@
 "use client";
-import { User } from "lucide-react";
+import { User, Star, ArrowRight, AlertCircle } from "lucide-react";
 
 type Offer = {
   id: string;
@@ -72,53 +72,85 @@ const mockOffers: Offer[] = [
 const OffersList = () => {
   return (
     <div className="space-y-4">
-      {mockOffers.map((offer) => (
-        <div
-          key={offer.id}
-          className="bg-white rounded-xl p-4 border border-gray-100 space-y-4"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <User className="w-6 h-6 text-gray-400" />
-              </div>
-              <div>
-                <div className="font-medium text-gray-900">
-                  {offer.user.name}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {offer.user.rating} ★ • {offer.user.trades} trades
-                </div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-bold text-gray-900">
-                ${offer.price}
-              </div>
-              <div className="text-sm text-gray-500">{offer.currency}</div>
-            </div>
-          </div>
-          <div className="flex justify-between text-sm text-gray-500">
-            <div>Payment Method</div>
-            <div className="font-medium text-gray-900">
-              {offer.paymentMethod}
-            </div>
-          </div>
-          <div className="flex justify-between text-sm text-gray-500">
-            <div>Available</div>
-            <div className="font-medium text-gray-900">${offer.available}</div>
-          </div>
-          <div className="flex justify-between text-sm text-gray-500">
-            <div>Limits</div>
-            <div className="font-medium text-gray-900">
-              ${offer.limits.min} - ${offer.limits.max}
-            </div>
-          </div>
-          <button className="w-full bg-yellow-500 text-black font-bold py-3 rounded-lg hover:bg-yellow-400 transition-colors">
-            Buy {offer.currency}
-          </button>
+      <div className="flex items-center justify-between px-4">
+        <div className="flex items-center px-3 py-1 border border-blue-200 rounded-full text-blue-500 text-sm">
+          <AlertCircle className="w-4 h-4 mr-1" />
+          Best Prices
         </div>
-      ))}
+      </div>
+
+      <div className="space-y-3">
+        {mockOffers.map((offer) => (
+          <div
+            key={offer.id}
+            className="bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors"
+          >
+            <div className="p-4">
+              <div className="flex items-start justify-between gap-4">
+                {/* User Info */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-lg font-semibold text-gray-600">
+                      {offer.user.name[0]}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">
+                      {offer.user.name}
+                    </h3>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Star
+                        className="w-4 h-4 text-yellow-400 mr-1"
+                        fill="currentColor"
+                      />
+                      <span>{offer.user.rating}</span>
+                      <span className="mx-1.5">•</span>
+                      <span>{offer.user.trades} trades</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="text-right">
+                  <p className="text-lg font-bold text-gray-900">
+                    ${offer.price}
+                  </p>
+                  <p className="text-sm text-gray-500">{offer.currency}</p>
+                </div>
+              </div>
+
+              {/* Details */}
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-gray-500">Payment Method</p>
+                  <p className="font-medium text-gray-900">
+                    {offer.paymentMethod}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Available</p>
+                  <p className="font-medium text-gray-900">
+                    ${offer.available.toLocaleString()}
+                  </p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-gray-500">Limits</p>
+                  <p className="font-medium text-gray-900">
+                    ${offer.limits.min.toLocaleString()} - $
+                    {offer.limits.max.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button className="mt-4 w-full py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center font-medium">
+                Buy {offer.currency}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
