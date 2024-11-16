@@ -8,6 +8,8 @@ import {
   Camera,
   Paperclip,
   X,
+  Image,
+  FileText,
 } from "lucide-react";
 import { useState, useRef } from "react";
 import Identicon from "@/components/common/Identicon";
@@ -17,27 +19,17 @@ type Message = {
   type: "system" | "sender" | "receiver";
   content: string;
   time: string;
+  file?: {
+    url: string;
+    type: string;
+    name: string;
+  };
 };
 
 export default function ChatPage({ params }: { params: { address: string } }) {
   const router = useRouter();
-  const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showCamera, setShowCamera] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-
-  // Reference to mockOffers data structure from OffersList.tsx
-  const mockOffer = {
-    user: {
-      address: params.address,
-      rating: 4.95,
-      trades: 432,
-    },
-    price: 35.55,
-    currency: "THB",
-    amount: 1000,
-  };
 
   const mockMessages: Message[] = [
     {
@@ -60,17 +52,69 @@ export default function ChatPage({ params }: { params: { address: string } }) {
     },
   ];
 
+  const [message, setMessage] = useState("");
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [messages, setMessages] = useState<Message[]>([...mockMessages]);
+
+  // Reference to mockOffers data structure from OffersList.tsx
+  const mockOffer = {
+    user: {
+      address: params.address,
+      rating: 4.95,
+      trades: 432,
+    },
+    price: 35.55,
+    currency: "THB",
+    amount: 1000,
+  };
+
   const handleSend = () => {
     if (message.trim()) {
       setMessage("");
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // Handle the file upload logic here
-      console.log("File selected:", file);
+    if (!file) return;
+
+    // Create a temporary URL for preview
+    const fileUrl = URL.createObjectURL(file);
+
+    // Get current time
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    // Add new message with file
+    const newMessage: Message = {
+      id: messages.length + 1,
+      type: "sender",
+      content: file.type.startsWith("image/")
+        ? "Sent an image"
+        : `Sent a file: ${file.name}`,
+      time: timeString,
+      file: {
+        url: fileUrl,
+        type: file.type,
+        name: file.name,
+      },
+    };
+
+    setMessages([...messages, newMessage]);
+
+    // In a real implementation, you would upload the file to your backend here
+    try {
+      // Simulated upload delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("File uploaded successfully:", file);
+    } catch (error) {
+      console.error("Error uploading file:", error);
     }
   };
 
@@ -116,6 +160,31 @@ export default function ChatPage({ params }: { params: { address: string } }) {
         }
       }, "image/jpeg");
     }
+  };
+
+  // Update the message rendering to include files
+  const renderMessage = (msg: Message) => {
+    if (!msg.file) {
+      return <div className="text-sm">{msg.content}</div>;
+    }
+
+    return (
+      <div className="space-y-2">
+        <div className="text-sm">{msg.content}</div>
+        {msg.file.type.startsWith("image/") ? (
+          <img
+            src={msg.file.url}
+            alt="Uploaded image"
+            className="max-w-[200px] rounded-lg"
+          />
+        ) : (
+          <div className="flex items-center space-x-2 bg-gray-50 p-2 rounded-lg">
+            <FileText size={20} />
+            <span className="text-sm truncate">{msg.file.name}</span>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -177,7 +246,7 @@ export default function ChatPage({ params }: { params: { address: string } }) {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {mockMessages.map((msg) => (
+        {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex ${
@@ -197,7 +266,7 @@ export default function ChatPage({ params }: { params: { address: string } }) {
                   : "bg-white text-gray-900 border border-gray-200"
               } rounded-lg px-4 py-2 max-w-[85%]`}
             >
-              <div className="text-sm">{msg.content}</div>
+              {renderMessage(msg)}
               {msg.type !== "system" && (
                 <div
                   className={`text-xs mt-1 ${

@@ -14,7 +14,7 @@ import Profile from "../profile/Profile";
 import Identicon from "../common/Identicon";
 import { useSmallScreen } from "@/hooks/useSmallScreen";
 import { useRouter } from "next/navigation";
-import { createListing } from '../../utils/transactions';
+// import { createListing } from "../../utils/transactions";
 import { useTransaction } from "./TransactionContext";
 
 type Currency = {
@@ -78,7 +78,7 @@ const TransactionForm = () => {
     isDropdownOpen,
     setIsDropdownOpen,
   } = useWallet();
-  const { createListing } = useTransaction();
+  // const { createListing } = useTransaction();
   const [showOffers, setShowOffers] = useState(false);
   const sendInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
