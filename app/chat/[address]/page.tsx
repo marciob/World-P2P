@@ -1,6 +1,14 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Send, Info, Star, Camera, Paperclip } from "lucide-react";
+import {
+  ChevronLeft,
+  Send,
+  Info,
+  Star,
+  Camera,
+  Paperclip,
+  X,
+} from "lucide-react";
 import { useState, useRef } from "react";
 import Identicon from "@/components/common/Identicon";
 
@@ -15,6 +23,9 @@ export default function ChatPage({ params }: { params: { address: string } }) {
   const router = useRouter();
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
 
   // Reference to mockOffers data structure from OffersList.tsx
   const mockOffer = {
@@ -63,8 +74,52 @@ export default function ChatPage({ params }: { params: { address: string } }) {
     }
   };
 
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+      setShowCamera(true);
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(videoRef.current, 0, 0);
+
+      // Convert to file and handle upload
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], "camera-capture.jpg", {
+            type: "image/jpeg",
+          });
+          handleFileUpload({ target: { files: [file] } } as any);
+          stopCamera();
+        }
+      }, "image/jpeg");
+    }
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gray-50 relative">
       <div className="bg-white border-b border-gray-200">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between mb-4">
@@ -157,11 +212,37 @@ export default function ChatPage({ params }: { params: { address: string } }) {
         ))}
       </div>
 
+      {showCamera && (
+        <div className="absolute inset-0 bg-black z-50">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-t from-black/50">
+            <button
+              onClick={stopCamera}
+              className="p-2 text-white rounded-full bg-gray-800/50"
+            >
+              <X size={24} />
+            </button>
+            <button
+              onClick={capturePhoto}
+              className="p-4 text-white rounded-full bg-white/20"
+            >
+              <div className="w-12 h-12 rounded-full border-4 border-white" />
+            </button>
+            <div className="w-10" /> {/* Spacer for layout balance */}
+          </div>
+        </div>
+      )}
+
       <div className="p-4 bg-white border-t border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={startCamera}
               className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
             >
               <Camera size={20} />
