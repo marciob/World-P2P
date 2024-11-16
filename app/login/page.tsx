@@ -1,13 +1,17 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  console.log("session ", session);
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    signIn("worldcoin");
     localStorage.setItem("isLoggedIn", "true");
-    router.push("/");
   };
 
   useEffect(() => {
