@@ -15,8 +15,8 @@ import Identicon from "../common/Identicon";
 import { useSmallScreen } from "@/hooks/useSmallScreen";
 import { useRouter } from "next/navigation";
 // import { createListing } from "../../utils/transactions";
-import { useTransaction } from "./TransactionContext";
 import { useOffers } from "./OffersContext";
+import { useTransaction } from "@/components/transaction/TransactionContext";
 
 type Currency = {
   symbol: string;

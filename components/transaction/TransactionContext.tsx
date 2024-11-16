@@ -15,11 +15,10 @@ import { createPublicClient, http } from 'viem';
 import { worldchain } from 'viem/chains';
 
 interface TransactionContextType {
-  address: string | null;
   createListing: (asset: string, amount: string, price: string) => Promise<void>;
   cancelListing: (index: number) => Promise<void>;
-  getListings: () => Promise<any>;
-  getSellerListings: () => Promise<any>;
+  getListings: () => Promise<void>;
+  getSellerListings: (account: string) => Promise<void>;
   transactionId: string | null;
 }
 
@@ -32,7 +31,6 @@ declare global {
 }
 
 export function TransactionProvider({ children }: { children: ReactNode }) {
-  const [address, setAddress] = useState<string | null>(null);
   const contractAddress = '0xFb5b8a51d1E3A084805bc4FF3Ed112AFeC01F2b3';
   const { data: session } = useSession();
   const [transactionId, setTransactionId] = useState<string | null>(null);
@@ -41,11 +39,6 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     chain: worldchain,
     transport: http('https://worldchain-mainnet.g.alchemy.com/public'),
   });
-
-  useEffect(() => {
-    const walletAddress = MiniKit.walletAddress;
-    setAddress(walletAddress);
-  }, []);
 
   const callContract = async (functionName: string, args: any[]) => {
     if (!MiniKit.isInstalled()) {
@@ -90,19 +83,18 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     await callContract('listings', []);
   };
 
-  const getSellerListings = async () => {
-    await callContract('getListingsBySeller', []);
+  const getSellerListings = async (account: string) => {
+    await callContract('getListingsBySeller', [account]);
   };
 
   return (
     <TransactionContext.Provider
       value={{
-        address,
         createListing,
-        getListings,
         cancelListing,
-        transactionId,
+        getListings,
         getSellerListings,
+        transactionId,
       }}
     >
       {children}
@@ -112,6 +104,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
 
 export const useTransaction = () => {
   const context = useContext(TransactionContext);
+  console.log("tx context", context);
   if (!context) {
     throw new Error("useTransaction must be used within a TransactionProvider");
   }
