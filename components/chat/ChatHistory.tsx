@@ -49,7 +49,9 @@ const ChatHistory = ({ onBack }: ChatHistoryProps) => {
             <button onClick={onBack}>
               <ChevronLeft className="w-6 h-6 text-gray-600" />
             </button>
-            <h1 className="ml-2 text-xl font-semibold">Chat History</h1>
+            <h1 className="ml-2 text-xl font-semibold text-gray-900">
+              Chat History
+            </h1>
           </div>
         </div>
 
