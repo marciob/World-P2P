@@ -398,7 +398,7 @@ const TransactionForm = () => {
                 }
                 className="w-full py-4 px-6 rounded-xl font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors"
               >
-                {isConnected ? "Send" : "Connect"}
+                {isConnected ? "Create Offer" : "Connect"}
               </button>
               <button
                 onClick={() => setShowOffers(true)}
