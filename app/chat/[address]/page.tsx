@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Send, Info, Star } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, Send, Info, Star, Camera, Paperclip } from "lucide-react";
+import { useState, useRef } from "react";
 import Identicon from "@/components/common/Identicon";
 
 type Message = {
@@ -14,6 +14,7 @@ type Message = {
 export default function ChatPage({ params }: { params: { address: string } }) {
   const router = useRouter();
   const [message, setMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reference to mockOffers data structure from OffersList.tsx
   const mockOffer = {
@@ -51,6 +52,14 @@ export default function ChatPage({ params }: { params: { address: string } }) {
   const handleSend = () => {
     if (message.trim()) {
       setMessage("");
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Handle the file upload logic here
+      console.log("File selected:", file);
     }
   };
 
@@ -150,6 +159,27 @@ export default function ChatPage({ params }: { params: { address: string } }) {
 
       <div className="p-4 bg-white border-t border-gray-200">
         <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <Camera size={20} />
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <Paperclip size={20} className="rotate-45" />
+            </button>
+          </div>
+          <input
+            type="file"
+            accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+          />
           <div className="flex-1 bg-gray-100 rounded-lg px-4 py-2">
             <input
               type="text"
