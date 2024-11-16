@@ -10,35 +10,37 @@ export default function OffersPage() {
   const { address } = useWallet();
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto bg-white">
-        <div className="p-4 border-b border-gray-100">
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200">
+        <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.back()}
-                className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className="text-gray-600 hover:text-gray-800"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft size={24} />
               </button>
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                {address ? (
-                  <Identicon value={address} size={40} />
-                ) : (
-                  <CircleUserRound className="w-6 h-6 text-gray-400" />
-                )}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden border border-gray-100">
+                  {address ? (
+                    <Identicon value={address} size={40} />
+                  ) : (
+                    <CircleUserRound className="w-6 h-6 text-gray-400" />
+                  )}
+                </div>
+                <h1 className="text-xl font-semibold text-gray-800">
+                  P2P Transactions
+                </h1>
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                Available Offers
-              </h2>
             </div>
           </div>
         </div>
-
-        <div className="p-6">
-          <OffersList />
-        </div>
       </div>
-    </main>
+
+      <div className="max-w-md mx-auto p-4">
+        <OffersList />
+      </div>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { User, Star, ArrowRight, AlertCircle } from "lucide-react";
+import { Star, ArrowRight, MessageCircle, AlertCircle } from "lucide-react";
 
 type Offer = {
   id: string;
@@ -10,7 +10,6 @@ type Offer = {
   };
   price: number;
   currency: string;
-  paymentMethod: string;
   available: number;
   limits: {
     min: number;
@@ -28,7 +27,6 @@ const mockOffers: Offer[] = [
     },
     price: 35.5,
     currency: "USDC",
-    paymentMethod: "PromptPay",
     available: 175000,
     limits: {
       min: 3500,
@@ -44,7 +42,6 @@ const mockOffers: Offer[] = [
     },
     price: 35.45,
     currency: "USDC",
-    paymentMethod: "Bank Transfer",
     available: 105000,
     limits: {
       min: 1750,
@@ -60,7 +57,6 @@ const mockOffers: Offer[] = [
     },
     price: 35.55,
     currency: "USDC",
-    paymentMethod: "PayPal",
     available: 350000,
     limits: {
       min: 7000,
@@ -72,73 +68,63 @@ const mockOffers: Offer[] = [
 const OffersList = () => {
   return (
     <div className="space-y-4">
-      <div className="space-y-3">
+      <div className="space-y-4">
         {mockOffers.map((offer) => (
           <div
             key={offer.id}
-            className="bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors"
+            className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
           >
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-4">
-                {/* User Info */}
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center shrink-0">
-                    <span className="text-lg font-semibold text-gray-600">
-                      {offer.user.name[0]}
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-semibold text-lg">
+                  {offer.user.name[0]}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    {offer.user.name}
+                  </h3>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <div className="flex items-center text-yellow-500">
+                      <Star size={16} fill="currentColor" />
+                      <span className="ml-1">{offer.user.rating}</span>
+                    </div>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-500">
+                      {offer.user.trades} trades
                     </span>
                   </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {offer.user.name}
-                    </h3>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Star
-                        className="w-4 h-4 text-yellow-400 mr-1"
-                        fill="currentColor"
-                      />
-                      <span>{offer.user.rating}</span>
-                      <span className="mx-1.5">•</span>
-                      <span>{offer.user.trades} trades</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Price */}
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-900">
-                    ${offer.price}
-                  </p>
-                  <p className="text-sm text-gray-500">{offer.currency}</p>
                 </div>
               </div>
-
-              {/* Details */}
-              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-gray-500">Payment Method</p>
-                  <p className="font-medium text-gray-900">
-                    {offer.paymentMethod}
-                  </p>
+              <div className="text-right">
+                <div className="text-lg font-semibold text-gray-900">
+                  ${offer.price}
                 </div>
-                <div>
-                  <p className="text-gray-500">Available</p>
-                  <p className="font-medium text-gray-900">
-                    ${offer.available.toLocaleString()}
-                  </p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-gray-500">Limits</p>
-                  <p className="font-medium text-gray-900">
-                    ${offer.limits.min.toLocaleString()} - $
-                    {offer.limits.max.toLocaleString()}
-                  </p>
-                </div>
+                <div className="text-sm text-gray-500">{offer.currency}</div>
               </div>
+            </div>
 
-              {/* Action Button */}
-              <button className="mt-4 w-full py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center justify-center font-medium">
+            <div className="space-y-2 bg-gray-50 p-3 rounded-xl">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Available</span>
+                <span className="font-medium text-gray-900">
+                  ${offer.available.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Limits</span>
+                <span className="font-medium text-gray-900">
+                  ${offer.limits.min.toLocaleString()} - $
+                  {offer.limits.max.toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 flex space-x-3">
+              <button className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors">
                 Buy {offer.currency}
-                <ArrowRight className="w-4 h-4 ml-2" />
+              </button>
+              <button className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 transition-colors">
+                <MessageCircle size={20} />
               </button>
             </div>
           </div>
