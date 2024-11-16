@@ -5,6 +5,7 @@ import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
 import { ClientProvider } from "@/components/wallet/provider/ClientProvider";
+import { OffersProvider } from "@/components/transaction/OffersContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,9 +31,11 @@ function RootLayout({
           <ErudaProvider>
             <MiniKitProvider>
               <ClientProvider>
-                <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
-                  {children}
-                </div>
+                <OffersProvider>
+                  <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
+                    {children}
+                  </div>
+                </OffersProvider>
               </ClientProvider>
             </MiniKitProvider>
           </ErudaProvider>

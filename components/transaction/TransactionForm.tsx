@@ -16,11 +16,31 @@ import { useSmallScreen } from "@/hooks/useSmallScreen";
 import { useRouter } from "next/navigation";
 // import { createListing } from "../../utils/transactions";
 import { useTransaction } from "./TransactionContext";
+import { useOffers } from "./OffersContext";
 
 type Currency = {
   symbol: string;
   color: string;
   icon: string;
+};
+
+type Offer = {
+  id: string;
+  user: {
+    address: string;
+    rating: number;
+    trades: number;
+  };
+  price: number;
+  currency: string;
+  available: number;
+  limits: {
+    min: number;
+    max: number;
+  };
+  isUserOffer?: boolean;
+  status?: "active" | "completed" | "cancelled";
+  createdAt?: string;
 };
 
 const currencies: Currency[] = [
@@ -94,6 +114,8 @@ const TransactionForm = () => {
   const [showKeyboard, setShowKeyboard] = useState(false);
   const isSmallScreen = useSmallScreen();
   const router = useRouter();
+  const { addOffer } = useOffers();
+  const [userOffers, setUserOffers] = useState<Offer[]>([]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -250,6 +272,33 @@ const TransactionForm = () => {
     if (isSmallScreen) {
       setShowKeyboard(true);
     }
+  };
+
+  const handleCreateOffer = () => {
+    if (!amount || !isConnected) return;
+
+    const newOffer: Offer = {
+      id: `${Date.now()}`,
+      user: {
+        address: address || "",
+        rating: 5.0,
+        trades: 0,
+      },
+      price: parseFloat(amount),
+      currency: selectedToCurrency.symbol,
+      available: parseFloat(amount),
+      limits: {
+        min: parseFloat(amount) * 0.1,
+        max: parseFloat(amount),
+      },
+      isUserOffer: true,
+      status: "active",
+      createdAt: new Date().toISOString(),
+    };
+
+    addOffer(newOffer);
+    setUserOffers((prev) => [...prev, newOffer]);
+    router.push("/offers");
   };
 
   return (
@@ -410,7 +459,7 @@ const TransactionForm = () => {
             <div className="space-y-4">
               <button
                 onClick={() =>
-                  isConnected ? setShowOffers(true) : connectWallet()
+                  isConnected ? handleCreateOffer() : connectWallet()
                 }
                 className="w-full py-4 px-6 rounded-xl font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors"
               >
@@ -445,7 +494,7 @@ const TransactionForm = () => {
 
           <div className="mt-auto">
             {/* Offers List */}
-            {showOffers && <OffersList />}
+            {showOffers && <OffersList userOffers={userOffers} />}
           </div>
         </div>
       ) : (
@@ -472,7 +521,7 @@ const TransactionForm = () => {
           {/* Main Form */}
           <div className="p-6 flex-1 space-y-8">
             {/* Offers List */}
-            <OffersList />
+            <OffersList userOffers={userOffers} />
           </div>
 
           <div className="mt-auto">

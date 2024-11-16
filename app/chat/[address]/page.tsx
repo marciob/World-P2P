@@ -35,19 +35,19 @@ export default function ChatPage({ params }: { params: { address: string } }) {
     {
       id: 1,
       type: "system",
-      content: "Trade started for THB/USDT",
+      content: "Trade started for THB/USDC",
       time: "2:30 PM",
     },
     {
       id: 2,
       type: "receiver",
-      content: "Hi, I would like to buy THB with USDT",
+      content: "Hi, I would like to buy THB with USDC",
       time: "2:31 PM",
     },
     {
       id: 3,
       type: "sender",
-      content: "Sure, please send the USDT to my wallet address",
+      content: "Sure, please send the USDC to my wallet address",
       time: "2:32 PM",
     },
   ];
