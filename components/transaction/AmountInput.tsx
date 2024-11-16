@@ -30,6 +30,14 @@ const AmountInput = ({
     }
   }, [autoFocus]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow positive numbers and zero
+    if (value === "" || (!isNaN(Number(value)) && Number(value) >= 0)) {
+      onChange(value);
+    }
+  };
+
   return (
     <div className="relative">
       <label className="text-sm font-medium text-gray-600 mb-2 block">
@@ -40,12 +48,19 @@ const AmountInput = ({
           <input
             ref={finalInputRef}
             type="number"
+            min="0"
+            step="any"
             value={amount}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={handleChange}
             onClick={onClick}
             className="flex-1 bg-transparent text-lg focus:outline-none rounded-lg p-2 text-gray-700"
             placeholder="0.00"
             autoFocus={autoFocus}
+            onKeyDown={(e) => {
+              if (e.key === "-") {
+                e.preventDefault();
+              }
+            }}
           />
         </div>
       </div>
