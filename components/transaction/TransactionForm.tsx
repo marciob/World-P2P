@@ -341,6 +341,7 @@ const TransactionForm = () => {
                   balance={`${mockBalance} ${selectedFromCurrency.symbol}`}
                   onMaxClick={handleMaxClick}
                   onClick={handleInputClick}
+                  autoFocus={true}
                 />
               </div>
               <div className="flex-shrink-0">

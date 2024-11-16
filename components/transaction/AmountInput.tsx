@@ -1,3 +1,5 @@
+import React, { useRef, useEffect } from "react";
+
 interface AmountInputProps {
   label: string;
   amount: string;
@@ -14,11 +16,20 @@ const AmountInput = ({
   amount,
   onChange,
   inputRef,
-  autoFocus,
+  autoFocus = false,
   balance,
   onMaxClick,
   onClick,
 }: AmountInputProps) => {
+  const defaultInputRef = useRef<HTMLInputElement>(null);
+  const finalInputRef = inputRef || defaultInputRef;
+
+  useEffect(() => {
+    if (autoFocus && finalInputRef.current) {
+      finalInputRef.current.focus();
+    }
+  }, [autoFocus]);
+
   return (
     <div className="relative">
       <label className="text-sm font-medium text-gray-600 mb-2 block">
@@ -27,7 +38,7 @@ const AmountInput = ({
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:border-gray-300 transition-colors">
         <div className="flex items-center space-x-4">
           <input
-            ref={inputRef}
+            ref={finalInputRef}
             type="number"
             value={amount}
             onChange={(e) => onChange(e.target.value)}
