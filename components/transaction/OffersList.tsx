@@ -20,48 +20,48 @@ type Offer = {
 
 const mockOffers: Offer[] = [
   {
-    id: "1",
-    user: {
-      address: "0x1234567890abcdef1234567890abcdef12345678",
-      rating: 4.8,
-      trades: 123,
-    },
-    price: 35.5,
-    currency: "USDC",
-    available: 175000,
-    limits: {
-      min: 3500,
-      max: 175000,
-    },
-  },
-  {
-    id: "2",
-    user: {
-      address: "0xabcdef1234567890abcdef1234567890abcdef12",
-      rating: 4.9,
-      trades: 256,
-    },
-    price: 35.45,
-    currency: "USDC",
-    available: 105000,
-    limits: {
-      min: 1750,
-      max: 105000,
-    },
-  },
-  {
     id: "3",
     user: {
       address: "0x7890abcdef1234567890abcdef1234567890abcd",
       rating: 4.7,
       trades: 89,
     },
-    price: 35.55,
+    price: 1.0,
     currency: "USDC",
     available: 350000,
     limits: {
-      min: 7000,
+      min: 100,
       max: 350000,
+    },
+  },
+  {
+    id: "4",
+    user: {
+      address: "0x9876543210fedcba9876543210fedcba98765432",
+      rating: 4.95,
+      trades: 432,
+    },
+    price: 35.55,
+    currency: "THB",
+    available: 1000000,
+    limits: {
+      min: 1000,
+      max: 1000000,
+    },
+  },
+  {
+    id: "5",
+    user: {
+      address: "0xdef0123456789abcdef0123456789abcdef0123",
+      rating: 4.85,
+      trades: 167,
+    },
+    price: 1.08,
+    currency: "EUR",
+    available: 250000,
+    limits: {
+      min: 500,
+      max: 250000,
     },
   },
 ];
@@ -101,10 +101,12 @@ const OffersList = () => {
                 </div>
               </div>
               <div className="text-right">
+                <div className="text-sm text-gray-500 mb-0.5">Price</div>
                 <div className="text-lg font-semibold text-gray-900">
-                  ${offer.price}
+                  {offer.currency === "USDC" ? "$" : ""}
+                  {offer.price.toLocaleString()}
+                  {offer.currency !== "USDC" ? ` ${offer.currency}` : ""}
                 </div>
-                <div className="text-sm text-gray-500">{offer.currency}</div>
               </div>
             </div>
 
