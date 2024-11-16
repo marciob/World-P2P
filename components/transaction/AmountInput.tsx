@@ -4,6 +4,8 @@ interface AmountInputProps {
   onChange: (value: string) => void;
   inputRef?: React.RefObject<HTMLInputElement>;
   autoFocus?: boolean;
+  balance?: string;
+  onMaxClick?: () => void;
 }
 
 const AmountInput = ({
@@ -12,6 +14,8 @@ const AmountInput = ({
   onChange,
   inputRef,
   autoFocus,
+  balance,
+  onMaxClick,
 }: AmountInputProps) => {
   return (
     <div className="relative">
@@ -31,6 +35,17 @@ const AmountInput = ({
           />
         </div>
       </div>
+      {balance && (
+        <div className="flex justify-between items-center mt-2 px-1">
+          <span className="text-sm text-gray-500">Your balance: {balance}</span>
+          <button
+            onClick={onMaxClick}
+            className="text-sm text-blue-500 hover:text-blue-600 font-medium"
+          >
+            max
+          </button>
+        </div>
+      )}
     </div>
   );
 };

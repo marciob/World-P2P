@@ -48,6 +48,7 @@ const TransactionForm = () => {
   const [showOffers, setShowOffers] = useState(false);
   const sendInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [mockBalance, setMockBalance] = useState("1,000.00");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -92,6 +93,10 @@ const TransactionForm = () => {
 
   const handleClear = () => {
     setAmount("");
+  };
+
+  const handleMaxClick = () => {
+    setAmount(mockBalance.replace(/,/g, ""));
   };
 
   return (
@@ -163,8 +168,8 @@ const TransactionForm = () => {
                   label="You Pay"
                   amount={amount}
                   onChange={setAmount}
-                  inputRef={sendInputRef}
-                  autoFocus
+                  balance={`${mockBalance} ${selectedFromCurrency.symbol}`}
+                  onMaxClick={handleMaxClick}
                 />
               </div>
               <div className="mt-7">
