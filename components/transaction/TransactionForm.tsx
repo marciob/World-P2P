@@ -8,6 +8,7 @@ import CurrencySelect from "./CurrencySelect";
 import AmountInput from "./AmountInput";
 import { fetchExchangeRates, ExchangeRates } from "@/services/api/currency";
 import { fetchCryptoPrice, convertCryptoToFiat } from "@/services/api/crypto";
+import ExchangeRate from "./ExchangeRate";
 
 type Currency = {
   symbol: string;
@@ -304,6 +305,12 @@ const TransactionForm = () => {
                   label="You Receive"
                   amount={receiveAmount}
                   onChange={setReceiveAmount}
+                />
+                <ExchangeRate
+                  fromAmount={amount}
+                  toAmount={receiveAmount}
+                  fromCurrency={selectedFromCurrency.symbol}
+                  toCurrency={selectedToCurrency.symbol}
                 />
               </div>
               <div className="mt-7">
