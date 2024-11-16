@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Wallet2, ArrowUpDown } from "lucide-react";
+import { Wallet2, ArrowUpDown, MessageSquareText } from "lucide-react";
 import { useWallet } from "@/components/wallet/context/WalletContext";
 import OffersList from "./OffersList";
 import NumberKeyboard from "./NumberKeyboard";
@@ -225,48 +225,56 @@ const TransactionForm = () => {
                   P2P Transactions
                 </h2>
               </div>
-              <div className="relative" ref={dropdownRef}>
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!isConnected) {
-                      connectWallet();
-                    } else {
-                      setIsDropdownOpen(!isDropdownOpen);
-                    }
-                  }}
-                  onMouseEnter={() => isConnected && setIsDropdownOpen(true)}
-                  className="px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  onClick={() => console.log("Chat clicked")}
                 >
-                  {isConnected && address ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      {shortenAddress(address)}
-                    </span>
-                  ) : (
-                    "Connect"
-                  )}
+                  <MessageSquareText className="w-5 h-5" />
                 </button>
-
-                {isConnected && isDropdownOpen && (
-                  <div
-                    className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
-                    onMouseLeave={() => setIsDropdownOpen(false)}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!isConnected) {
+                        connectWallet();
+                      } else {
+                        setIsDropdownOpen(!isDropdownOpen);
+                      }
+                    }}
+                    onMouseEnter={() => isConnected && setIsDropdownOpen(true)}
+                    className="px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
                   >
-                    <div className="py-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          disconnectWallet();
-                          setIsDropdownOpen(false);
-                        }}
-                        className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Disconnect Wallet
-                      </button>
+                    {isConnected && address ? (
+                      <span className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        {shortenAddress(address)}
+                      </span>
+                    ) : (
+                      "Connect"
+                    )}
+                  </button>
+
+                  {isConnected && isDropdownOpen && (
+                    <div
+                      className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                      onMouseLeave={() => setIsDropdownOpen(false)}
+                    >
+                      <div className="py-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            disconnectWallet();
+                            setIsDropdownOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Disconnect Wallet
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
