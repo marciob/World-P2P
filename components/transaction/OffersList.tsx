@@ -1,6 +1,7 @@
 "use client";
 import { Star, ArrowRight, MessageCircle, AlertCircle } from "lucide-react";
 import Identicon from "../common/Identicon";
+import { useRouter } from "next/navigation";
 
 type Offer = {
   id: string;
@@ -71,6 +72,8 @@ const shortenAddress = (address: string) => {
 };
 
 const OffersList = () => {
+  const router = useRouter();
+
   return (
     <div className="space-y-4">
       <div className="space-y-4">
@@ -130,7 +133,10 @@ const OffersList = () => {
               <button className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors">
                 Buy {offer.currency}
               </button>
-              <button className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 transition-colors">
+              <button
+                onClick={() => router.push(`/chat/${offer.user.address}`)}
+                className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200 transition-colors"
+              >
                 <MessageCircle size={20} />
               </button>
             </div>
