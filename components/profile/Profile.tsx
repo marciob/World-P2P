@@ -6,6 +6,8 @@ import {
   ExternalLink,
   Star,
   CircleUserRound,
+  Mail,
+  LogOut,
 } from "lucide-react";
 import Identicon from "../common/Identicon";
 
@@ -192,6 +194,24 @@ const Profile = ({ onBack, address }: ProfileProps) => {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="p-4 space-y-3">
+        <button className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
+          <div className="flex items-center">
+            <Mail className="w-5 h-5 text-gray-500 mr-3" />
+            <span>Set Email Recovery Method</span>
+          </div>
+          <span className="text-gray-400">→</span>
+        </button>
+
+        <button className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50">
+          <div className="flex items-center">
+            <LogOut className="w-5 h-5 text-gray-600 mr-3" />
+            <span>Logout from World ID</span>
+          </div>
+          <span className="text-gray-400">→</span>
+        </button>
       </div>
     </div>
   );
