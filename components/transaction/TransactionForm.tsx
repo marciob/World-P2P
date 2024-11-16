@@ -12,6 +12,7 @@ import ExchangeRate from "./ExchangeRate";
 import ChatHistory from "../chat/ChatHistory";
 import Profile from "../profile/Profile";
 import Identicon from "../common/Identicon";
+import { useSmallScreen } from "@/hooks/useSmallScreen";
 
 type Currency = {
   symbol: string;
@@ -86,6 +87,8 @@ const TransactionForm = () => {
   const [isFastRate, setIsFastRate] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+  const isSmallScreen = useSmallScreen();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -238,6 +241,12 @@ const TransactionForm = () => {
     setIsFastRate(!isFastRate);
   };
 
+  const handleInputClick = () => {
+    if (isSmallScreen) {
+      setShowKeyboard(true);
+    }
+  };
+
   return (
     <div className="w-full bg-white min-h-screen flex flex-col">
       {showProfile ? (
@@ -329,6 +338,7 @@ const TransactionForm = () => {
                   onChange={setAmount}
                   balance={`${mockBalance} ${selectedFromCurrency.symbol}`}
                   onMaxClick={handleMaxClick}
+                  onClick={handleInputClick}
                 />
               </div>
               <div className="flex-shrink-0">
@@ -409,13 +419,23 @@ const TransactionForm = () => {
             </div>
           </div>
 
-          <div className="mt-auto">
+          {!isSmallScreen ? (
+            <div className="mt-auto">
+              <NumberKeyboard
+                onNumberClick={handleNumberClick}
+                onBackspace={handleBackspace}
+                onClear={handleClear}
+              />
+            </div>
+          ) : (
             <NumberKeyboard
               onNumberClick={handleNumberClick}
               onBackspace={handleBackspace}
               onClear={handleClear}
+              isOpen={showKeyboard}
+              onClose={() => setShowKeyboard(false)}
             />
-          </div>
+          )}
 
           <div className="mt-auto">
             {/* Offers List */}

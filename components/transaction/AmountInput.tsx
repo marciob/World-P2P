@@ -6,6 +6,7 @@ interface AmountInputProps {
   autoFocus?: boolean;
   balance?: string;
   onMaxClick?: () => void;
+  onClick?: () => void;
 }
 
 const AmountInput = ({
@@ -16,6 +17,7 @@ const AmountInput = ({
   autoFocus,
   balance,
   onMaxClick,
+  onClick,
 }: AmountInputProps) => {
   return (
     <div className="relative">
@@ -29,6 +31,7 @@ const AmountInput = ({
             type="number"
             value={amount}
             onChange={(e) => onChange(e.target.value)}
+            onClick={onClick}
             className="flex-1 bg-transparent text-lg focus:outline-none rounded-lg p-2 text-gray-700"
             placeholder="0.00"
             autoFocus={autoFocus}
