@@ -71,6 +71,18 @@ const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
+const getCurrencyIcon = (currency: string): string => {
+  const iconMap: { [key: string]: string } = {
+    USDC: "/currencies/usdc.png",
+    THB: "/currencies/thailand.png",
+    EUR: "/currencies/euro.png",
+    BTC: "/currencies/bitcoin.png",
+    ETH: "/currencies/ethereum.png",
+  };
+
+  return iconMap[currency] || "/currencies/default.png";
+};
+
 const OffersList = () => {
   const router = useRouter();
 
@@ -131,7 +143,14 @@ const OffersList = () => {
 
             <div className="mt-4 flex space-x-3">
               <button className="flex-1 bg-blue-500 text-white py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors">
-                Buy {offer.currency}
+                <div className="flex items-center justify-center space-x-2">
+                  <span>Buy {offer.currency}</span>
+                  <img
+                    src={getCurrencyIcon(offer.currency)}
+                    alt={offer.currency}
+                    className="w-5 h-5"
+                  />
+                </div>
               </button>
               <button
                 onClick={() => router.push(`/chat/${offer.user.address}`)}
