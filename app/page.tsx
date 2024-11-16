@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MobileCheck from "../components/MobileCheck";
-import TransactionForm from "../components/TransactionForm";
+import TransactionForm from "../components/transaction/TransactionForm";
 
 export default function Home() {
   const router = useRouter();

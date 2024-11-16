@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Cashing",
-  description: "P2P Exchange Platform",
+  description: "P2P Platform",
 };
 
 export default function RootLayout({
