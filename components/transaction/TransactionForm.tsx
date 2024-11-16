@@ -321,8 +321,8 @@ const TransactionForm = () => {
           {/* Main Form */}
           <div className="p-6 flex-1 space-y-6">
             {/* You Pay Section */}
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex-1 min-w-0">
                 <AmountInput
                   label="You Pay"
                   amount={amount}
@@ -331,7 +331,7 @@ const TransactionForm = () => {
                   onMaxClick={handleMaxClick}
                 />
               </div>
-              <div>
+              <div className="flex-shrink-0">
                 <CurrencySelect
                   selectedCurrency={selectedFromCurrency}
                   currencies={currencies}
@@ -358,8 +358,8 @@ const TransactionForm = () => {
             </div>
 
             {/* You Receive Section */}
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex-1 min-w-0">
                 <div className="relative">
                   <AmountInput
                     label="You Receive"
@@ -376,7 +376,7 @@ const TransactionForm = () => {
                   />
                 </div>
               </div>
-              <div className="mt-7">
+              <div className="flex-shrink-0 mt-7">
                 <CurrencySelect
                   selectedCurrency={selectedToCurrency}
                   currencies={currencies}
