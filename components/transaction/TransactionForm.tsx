@@ -331,7 +331,7 @@ const TransactionForm = () => {
                   onMaxClick={handleMaxClick}
                 />
               </div>
-              <div className="mt-7">
+              <div>
                 <CurrencySelect
                   selectedCurrency={selectedFromCurrency}
                   currencies={currencies}
