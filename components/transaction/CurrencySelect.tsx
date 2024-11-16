@@ -61,23 +61,25 @@ const CurrencySelect = ({
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 z-10">
-          {currencies.map((currency) => (
-            <button
-              key={currency.symbol}
-              onClick={() => onSelect(currency)}
-              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl"
-            >
-              <img
-                src={currency.icon}
-                alt={currency.symbol}
-                className="w-6 h-6 object-contain"
-              />
-              <span className="font-medium text-gray-900">
-                {currency.symbol}
-              </span>
-            </button>
-          ))}
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+          <div className="max-h-[300px] overflow-y-auto">
+            {currencies.map((currency) => (
+              <button
+                key={currency.symbol}
+                onClick={() => onSelect(currency)}
+                className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl"
+              >
+                <img
+                  src={currency.icon}
+                  alt={currency.symbol}
+                  className="w-6 h-6 object-contain"
+                />
+                <span className="font-medium text-gray-900">
+                  {currency.symbol}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

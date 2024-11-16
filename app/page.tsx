@@ -12,14 +12,12 @@ export default function Home() {
   const [isSkipped, setIsSkipped] = useState(false);
 
   useEffect(() => {
-    // Check localStorage on component mount
     const skipped = localStorage.getItem("isSkipped");
     if (skipped === "true") {
       setIsSkipped(true);
     }
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
-  // Force re-render when localStorage changes
   useEffect(() => {
     const handleStorageChange = () => {
       const skipped = localStorage.getItem("isSkipped");
@@ -34,7 +32,7 @@ export default function Home() {
     <MobileCheck>
       {session || isSkipped ? (
         <main className="min-h-screen bg-gray-50">
-          <div className="container mx-auto px-4 py-8">
+          <div className="max-w-md mx-auto relative">
             <TransactionForm />
           </div>
         </main>
