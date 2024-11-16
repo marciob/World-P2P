@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Wallet2, ArrowUpDown, MessageSquareText } from "lucide-react";
+import { ArrowUpDown, MessageSquareText, CircleUserRound } from "lucide-react";
 import { useWallet } from "@/components/wallet/context/WalletContext";
 import OffersList from "./OffersList";
 import NumberKeyboard from "./NumberKeyboard";
@@ -9,6 +9,9 @@ import AmountInput from "./AmountInput";
 import { fetchExchangeRates, ExchangeRates } from "@/services/api/currency";
 import { fetchCryptoPrice, convertCryptoToFiat } from "@/services/api/crypto";
 import ExchangeRate from "./ExchangeRate";
+import ChatHistory from "../chat/ChatHistory";
+import Profile from "../profile/Profile";
+import Identicon from "../common/Identicon";
 
 type Currency = {
   symbol: string;
@@ -58,6 +61,8 @@ const TransactionForm = () => {
     {}
   );
   const [isFastRate, setIsFastRate] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -212,14 +217,25 @@ const TransactionForm = () => {
 
   return (
     <div className="w-full bg-white min-h-screen flex flex-col">
-      {!showOffers ? (
+      {showProfile ? (
+        <Profile onBack={() => setShowProfile(false)} address={address} />
+      ) : showChat ? (
+        <ChatHistory onBack={() => setShowChat(false)} />
+      ) : !showOffers ? (
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                  <Wallet2 className="w-5 h-5 text-gray-400" />
+                <div
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer overflow-hidden"
+                  onClick={() => setShowProfile(true)}
+                >
+                  {address ? (
+                    <Identicon value={address} size={40} />
+                  ) : (
+                    <CircleUserRound className="w-6 h-6 text-gray-400" />
+                  )}
                 </div>
                 <h2 className="text-lg font-semibold text-gray-800">
                   P2P Transactions
@@ -228,7 +244,7 @@ const TransactionForm = () => {
               <div className="flex items-center gap-3">
                 <button
                   className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-                  onClick={() => console.log("Chat clicked")}
+                  onClick={() => setShowChat(true)}
                 >
                   <MessageSquareText className="w-5 h-5" />
                 </button>
@@ -388,8 +404,15 @@ const TransactionForm = () => {
           {/* Header */}
           <div className="p-4 border-b border-gray-100">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                <Wallet2 className="w-5 h-5 text-gray-400" />
+              <div
+                className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer overflow-hidden"
+                onClick={() => setShowProfile(true)}
+              >
+                {address ? (
+                  <Identicon value={address} size={40} />
+                ) : (
+                  <CircleUserRound className="w-6 h-6 text-gray-400" />
+                )}
               </div>
               <h2 className="text-lg font-semibold text-gray-800">
                 P2P Transactions
