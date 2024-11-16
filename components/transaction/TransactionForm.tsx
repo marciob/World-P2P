@@ -84,24 +84,30 @@ const TransactionForm = () => {
 
           {/* Main Form */}
           <div className="p-6 flex-1 space-y-8">
-            <div className="flex items-center">
-              <AmountInput
-                label="You Send"
-                amount={amount}
-                onChange={setAmount}
-                inputRef={sendInputRef}
-                autoFocus
-              />
-              <CurrencySelect
-                selectedCurrency={selectedFromCurrency}
-                currencies={currencies}
-                showDropdown={showCurrencyFrom}
-                onToggleDropdown={() => setShowCurrencyFrom(!showCurrencyFrom)}
-                onSelect={(currency) => {
-                  setSelectedFromCurrency(currency);
-                  setShowCurrencyFrom(false);
-                }}
-              />
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <AmountInput
+                  label="You Pay"
+                  amount={amount}
+                  onChange={setAmount}
+                  inputRef={sendInputRef}
+                  autoFocus
+                />
+              </div>
+              <div className="mt-7">
+                <CurrencySelect
+                  selectedCurrency={selectedFromCurrency}
+                  currencies={currencies}
+                  showDropdown={showCurrencyFrom}
+                  onToggleDropdown={() =>
+                    setShowCurrencyFrom(!showCurrencyFrom)
+                  }
+                  onSelect={(currency) => {
+                    setSelectedFromCurrency(currency);
+                    setShowCurrencyFrom(false);
+                  }}
+                />
+              </div>
             </div>
 
             {/* Swap Button */}
@@ -114,22 +120,26 @@ const TransactionForm = () => {
               </button>
             </div>
 
-            <div className="flex items-center">
-              <AmountInput
-                label="You Receive"
-                amount={receiveAmount}
-                onChange={setReceiveAmount}
-              />
-              <CurrencySelect
-                selectedCurrency={selectedToCurrency}
-                currencies={currencies}
-                showDropdown={showCurrencyTo}
-                onToggleDropdown={() => setShowCurrencyTo(!showCurrencyTo)}
-                onSelect={(currency) => {
-                  setSelectedToCurrency(currency);
-                  setShowCurrencyTo(false);
-                }}
-              />
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <AmountInput
+                  label="You Receive"
+                  amount={receiveAmount}
+                  onChange={setReceiveAmount}
+                />
+              </div>
+              <div className="mt-7">
+                <CurrencySelect
+                  selectedCurrency={selectedToCurrency}
+                  currencies={currencies}
+                  showDropdown={showCurrencyTo}
+                  onToggleDropdown={() => setShowCurrencyTo(!showCurrencyTo)}
+                  onSelect={(currency) => {
+                    setSelectedToCurrency(currency);
+                    setShowCurrencyTo(false);
+                  }}
+                />
+              </div>
             </div>
 
             {/* Action Buttons */}

@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 type Currency = {
   symbol: string;
@@ -21,8 +21,29 @@ const CurrencySelect = ({
   onToggleDropdown,
   onSelect,
 }: CurrencySelectProps) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        onToggleDropdown();
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown, onToggleDropdown]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         className="flex items-center space-x-2 bg-gray-200 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors"
         onClick={onToggleDropdown}
