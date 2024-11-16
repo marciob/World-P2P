@@ -4,7 +4,7 @@ import { ChevronLeft, Search } from "lucide-react";
 const chatHistory = [
   {
     id: 1,
-    tradePair: "ETH/USDT",
+    tradePair: "ETH/USDC",
     amount: "1,500.00",
     lastMessage: "Payment confirmation sent",
     timestamp: "Today, 2:30 PM",
@@ -20,7 +20,7 @@ const chatHistory = [
   },
   {
     id: 3,
-    tradePair: "ETH/USDT",
+    tradePair: "ETH/USDC",
     amount: "3,200.00",
     lastMessage: "Transaction completed successfully",
     timestamp: "Apr 15, 9:20 AM",
@@ -28,7 +28,7 @@ const chatHistory = [
   },
   {
     id: 4,
-    tradePair: "BTC/USDT",
+    tradePair: "BTC/USDC",
     amount: "5,000.00",
     lastMessage: "Waiting for blockchain confirmation",
     timestamp: "Apr 14, 3:15 PM",

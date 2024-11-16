@@ -16,14 +16,35 @@ import Identicon from "../common/Identicon";
 type Currency = {
   symbol: string;
   color: string;
+  icon: string;
 };
 
 const currencies: Currency[] = [
-  { symbol: "BTC", color: "bg-orange-500" },
-  { symbol: "ETH", color: "bg-purple-500" },
-  { symbol: "USDT", color: "bg-teal-500" },
-  { symbol: "THB", color: "bg-green-500" },
-  { symbol: "EUR", color: "bg-blue-500" },
+  {
+    symbol: "BTC",
+    color: "bg-orange-500",
+    icon: "/currencies/bitcoin.png",
+  },
+  {
+    symbol: "ETH",
+    color: "bg-purple-500",
+    icon: "/currencies/ethereum.png",
+  },
+  {
+    symbol: "USDC",
+    color: "bg-teal-500",
+    icon: "/currencies/usdc.png",
+  },
+  {
+    symbol: "THB",
+    color: "bg-green-500",
+    icon: "/currencies/thailand.png",
+  },
+  {
+    symbol: "EUR",
+    color: "bg-blue-500",
+    icon: "/currencies/euro.png",
+  },
 ];
 
 const shortenAddress = (address: string) => {
@@ -36,12 +57,14 @@ const TransactionForm = () => {
   const [showCurrencyFrom, setShowCurrencyFrom] = useState(false);
   const [showCurrencyTo, setShowCurrencyTo] = useState(false);
   const [selectedFromCurrency, setSelectedFromCurrency] = useState<Currency>({
-    symbol: "USDT",
+    symbol: "USDC",
     color: "bg-teal-500",
+    icon: "/currencies/usdc.png",
   });
   const [selectedToCurrency, setSelectedToCurrency] = useState<Currency>({
     symbol: "THB",
     color: "bg-green-500",
+    icon: "/currencies/thailand.png",
   });
   const {
     isConnected,
@@ -85,7 +108,7 @@ const TransactionForm = () => {
       setIsLoading(true);
       try {
         const base =
-          selectedFromCurrency.symbol === "USDT"
+          selectedFromCurrency.symbol === "USDC"
             ? "USD"
             : selectedFromCurrency.symbol;
         const ratesData = await fetchExchangeRates(base);
@@ -137,7 +160,7 @@ const TransactionForm = () => {
 
         let convertedAmount: number;
         const toSymbol =
-          selectedToCurrency.symbol === "USDT"
+          selectedToCurrency.symbol === "USDC"
             ? "USD"
             : selectedToCurrency.symbol;
 

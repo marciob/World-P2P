@@ -26,7 +26,7 @@ const Profile = ({ onBack, address }: ProfileProps) => {
 
   const mockTransactions: Transaction[] = [
     {
-      pair: "ETH/USDT",
+      pair: "ETH/USDC",
       amount: "$1,500.00",
       date: "Today, 2:30 PM",
       status: "Payment confirmation sent",
@@ -38,7 +38,7 @@ const Profile = ({ onBack, address }: ProfileProps) => {
       status: "Please confirm the payment details",
     },
     {
-      pair: "ETH/USDT",
+      pair: "ETH/USDC",
       amount: "$3,200.00",
       date: "Apr 15, 9:20 AM",
       status: "Transaction completed successfully",
@@ -140,10 +140,14 @@ const Profile = ({ onBack, address }: ProfileProps) => {
             <div className="space-y-4">
               <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-teal-500 rounded-full" />
+                  <img
+                    src="/currencies/usdc.png"
+                    alt="USDC"
+                    className="w-8 h-8 object-contain"
+                  />
                   <div>
-                    <div className="font-medium">USDT</div>
-                    <div className="text-sm text-gray-500">Tether USD</div>
+                    <div className="font-medium">USDC</div>
+                    <div className="text-sm text-gray-500">USD Coin</div>
                   </div>
                 </div>
                 <div className="text-right">
@@ -154,7 +158,11 @@ const Profile = ({ onBack, address }: ProfileProps) => {
 
               <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-500 rounded-full" />
+                  <img
+                    src="/currencies/bitcoin.png"
+                    alt="BTC"
+                    className="w-8 h-8 object-contain"
+                  />
                   <div>
                     <div className="font-medium">BTC</div>
                     <div className="text-sm text-gray-500">Bitcoin</div>

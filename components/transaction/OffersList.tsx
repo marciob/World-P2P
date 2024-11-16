@@ -27,7 +27,7 @@ const mockOffers: Offer[] = [
       trades: 123,
     },
     price: 35.5,
-    currency: "USDT",
+    currency: "USDC",
     paymentMethod: "PromptPay",
     available: 175000,
     limits: {
@@ -43,7 +43,7 @@ const mockOffers: Offer[] = [
       trades: 256,
     },
     price: 35.45,
-    currency: "USDT",
+    currency: "USDC",
     paymentMethod: "Bank Transfer",
     available: 105000,
     limits: {
@@ -59,7 +59,7 @@ const mockOffers: Offer[] = [
       trades: 89,
     },
     price: 35.55,
-    currency: "USDT",
+    currency: "USDC",
     paymentMethod: "PayPal",
     available: 350000,
     limits: {

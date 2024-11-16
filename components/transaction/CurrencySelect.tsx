@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 type Currency = {
   symbol: string;
   color: string;
+  icon: string;
 };
 
 interface CurrencySelectProps {
@@ -45,36 +46,36 @@ const CurrencySelect = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center space-x-2 bg-gray-200 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors"
         onClick={onToggleDropdown}
+        className="flex items-center space-x-3 px-4 py-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50"
       >
-        <div className={`w-6 h-6 ${selectedCurrency.color} rounded-full`} />
+        <img
+          src={selectedCurrency.icon}
+          alt={selectedCurrency.symbol}
+          className="w-6 h-6 object-contain"
+        />
         <span className="font-medium text-gray-900">
           {selectedCurrency.symbol}
         </span>
-        <ChevronDown className="w-4 h-4 text-gray-700" />
+        <ChevronDown className="w-4 h-4 text-gray-500" />
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-50 rounded-xl shadow-xl border border-gray-200 py-2 z-10">
-          <div className="px-3 py-2 border-b border-gray-100">
-            <span className="text-sm font-medium text-gray-600">
-              Select Currency
-            </span>
-          </div>
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 z-10">
           {currencies.map((currency) => (
             <button
               key={currency.symbol}
-              className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center space-x-2 transition-colors duration-150"
               onClick={() => onSelect(currency)}
+              className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 first:rounded-t-xl last:rounded-b-xl"
             >
-              <div className={`w-6 h-6 ${currency.color} rounded-full`} />
-              <span className="font-medium text-gray-800">
+              <img
+                src={currency.icon}
+                alt={currency.symbol}
+                className="w-6 h-6 object-contain"
+              />
+              <span className="font-medium text-gray-900">
                 {currency.symbol}
               </span>
-              {currency.symbol === selectedCurrency.symbol && (
-                <span className="ml-auto text-blue-500">✓</span>
-              )}
             </button>
           ))}
         </div>
