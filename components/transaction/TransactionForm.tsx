@@ -13,6 +13,7 @@ import ChatHistory from "../chat/ChatHistory";
 import Profile from "../profile/Profile";
 import Identicon from "../common/Identicon";
 import { useSmallScreen } from "@/hooks/useSmallScreen";
+import { useRouter } from "next/navigation";
 
 type Currency = {
   symbol: string;
@@ -89,6 +90,7 @@ const TransactionForm = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const isSmallScreen = useSmallScreen();
+  const router = useRouter();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -411,7 +413,7 @@ const TransactionForm = () => {
                 {isConnected ? "Create Offer" : "Connect"}
               </button>
               <button
-                onClick={() => setShowOffers(true)}
+                onClick={() => router.push("/offers")}
                 className="w-full py-4 text-gray-500 hover:text-gray-700 transition-colors font-medium"
               >
                 See All Offers
