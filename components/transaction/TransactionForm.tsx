@@ -57,6 +57,7 @@ const TransactionForm = () => {
   const [cryptoPrices, setCryptoPrices] = useState<{ [key: string]: number }>(
     {}
   );
+  const [isFastRate, setIsFastRate] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -151,6 +152,10 @@ const TransactionForm = () => {
           convertedAmount = numAmount * rate;
         }
 
+        if (isFastRate) {
+          convertedAmount = convertedAmount * 0.98;
+        }
+
         setReceiveAmount(convertedAmount.toFixed(2));
       } catch (error) {
         console.error("Error converting amount:", error);
@@ -165,6 +170,7 @@ const TransactionForm = () => {
     selectedToCurrency.symbol,
     cryptoPrices,
     selectedFromCurrency.symbol,
+    isFastRate,
   ]);
 
   const handleSwapCurrencies = () => {
@@ -198,6 +204,10 @@ const TransactionForm = () => {
 
   const handleMaxClick = () => {
     setAmount(mockBalance.replace(/,/g, ""));
+  };
+
+  const handleFastRateToggle = () => {
+    setIsFastRate(!isFastRate);
   };
 
   return (
@@ -262,7 +272,8 @@ const TransactionForm = () => {
           </div>
 
           {/* Main Form */}
-          <div className="p-6 flex-1 space-y-8">
+          <div className="p-6 flex-1 space-y-6">
+            {/* You Pay Section */}
             <div className="flex items-center space-x-4">
               <div className="flex-1">
                 <AmountInput
@@ -290,7 +301,7 @@ const TransactionForm = () => {
             </div>
 
             {/* Swap Button */}
-            <div className="flex justify-center -my-4">
+            <div className="flex justify-center -my-2">
               <button
                 onClick={handleSwapCurrencies}
                 className="w-10 h-10 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
@@ -299,19 +310,24 @@ const TransactionForm = () => {
               </button>
             </div>
 
+            {/* You Receive Section */}
             <div className="flex items-center space-x-4">
               <div className="flex-1">
-                <AmountInput
-                  label="You Receive"
-                  amount={receiveAmount}
-                  onChange={setReceiveAmount}
-                />
-                <ExchangeRate
-                  fromAmount={amount}
-                  toAmount={receiveAmount}
-                  fromCurrency={selectedFromCurrency.symbol}
-                  toCurrency={selectedToCurrency.symbol}
-                />
+                <div className="relative">
+                  <AmountInput
+                    label="You Receive"
+                    amount={receiveAmount}
+                    onChange={setReceiveAmount}
+                  />
+                  <ExchangeRate
+                    fromAmount={amount}
+                    toAmount={receiveAmount}
+                    fromCurrency={selectedFromCurrency.symbol}
+                    toCurrency={selectedToCurrency.symbol}
+                    onFastRateClick={handleFastRateToggle}
+                    isFastRate={isFastRate}
+                  />
+                </div>
               </div>
               <div className="mt-7">
                 <CurrencySelect
@@ -337,7 +353,6 @@ const TransactionForm = () => {
               >
                 {isConnected ? "Send" : "Connect"}
               </button>
-
               <button
                 onClick={() => setShowOffers(true)}
                 className="w-full py-4 text-gray-500 hover:text-gray-700 transition-colors font-medium"
