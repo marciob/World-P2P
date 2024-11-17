@@ -10,6 +10,8 @@ import {
   X,
   Image,
   FileText,
+  CheckCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { useState, useRef } from "react";
 import Identicon from "@/components/common/Identicon";
@@ -69,6 +71,8 @@ export default function ChatPage({ params }: { params: { address: string } }) {
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [messages, setMessages] = useState<Message[]>([...mockMessages]);
+  const [isOrderFulfilled, setIsOrderFulfilled] = useState(false);
+  const [isDisputed, setIsDisputed] = useState(false);
 
   // Reference to mockOffers data structure from OffersList.tsx
   const mockOffer = {
@@ -86,6 +90,42 @@ export default function ChatPage({ params }: { params: { address: string } }) {
     if (message.trim()) {
       setMessage("");
     }
+  };
+
+  const handleFulfillOrder = () => {
+    setIsOrderFulfilled(true);
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    
+    const newMessage: Message = {
+      id: messages.length + 1,
+      type: "system",
+      content: "Order fulfilled - THB payment sent",
+      time: timeString,
+    };
+    
+    setMessages([...messages, newMessage]);
+  };
+
+  const handleDisputeOrder = () => {
+    setIsDisputed(true);
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    
+    const newMessage: Message = {
+      id: messages.length + 1,
+      type: "system",
+      content: "Order disputed - Awaiting moderator review",
+      time: timeString,
+    };
+    
+    setMessages([...messages, newMessage]);
   };
 
   const handleFileUpload = async (
@@ -296,9 +336,33 @@ export default function ChatPage({ params }: { params: { address: string } }) {
 
       {/* Payment Release Info Box */}
       <div className="px-4 py-3 bg-yellow-50 border-t border-yellow-100">
-        <div className="flex items-center space-x-2 text-yellow-800">
-          <Info size={20} className="shrink-0" />
-          <span className="text-sm font-medium">Waiting payment release</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 text-yellow-800">
+            <Info size={20} className="shrink-0" />
+            <span className="text-sm font-medium">
+              {isDisputed ? "Order disputed" : isOrderFulfilled ? "Order fulfilled" : "Waiting payment release"}
+            </span>
+          </div>
+          <div className="flex space-x-2">
+            {!isOrderFulfilled && !isDisputed && (
+              <>
+                <button
+                  onClick={handleDisputeOrder}
+                  className="flex items-center space-x-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <AlertTriangle size={18} />
+                  <span>Dispute</span>
+                </button>
+                <button
+                  onClick={handleFulfillOrder}
+                  className="flex items-center space-x-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  <CheckCircle size={18} />
+                  <span>Fulfill Order</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

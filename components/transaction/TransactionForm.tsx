@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 // import { createListing } from "../../utils/transactions";
 import { useOffers } from "./OffersContext";
 import { useTransaction } from "@/components/transaction/TransactionContext";
+import { ethers } from "ethers";
 
 type Currency = {
   symbol: string;
@@ -98,7 +99,7 @@ const TransactionForm = () => {
     isDropdownOpen,
     setIsDropdownOpen,
   } = useWallet();
-  // const { createListing } = useTransaction();
+  const { createListing, approveToken } = useTransaction();
   const [showOffers, setShowOffers] = useState(false);
   const sendInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -274,31 +275,33 @@ const TransactionForm = () => {
     }
   };
 
-  const handleCreateOffer = () => {
+  const handleCreateOffer = async() => {
     if (!amount || !isConnected) return;
 
-    const newOffer: Offer = {
-      id: `${Date.now()}`,
-      user: {
-        address: address || "",
-        rating: 5.0,
-        trades: 0,
-      },
-      price: parseFloat(amount),
-      currency: selectedToCurrency.symbol,
-      available: parseFloat(amount),
-      limits: {
-        min: parseFloat(amount) * 0.1,
-        max: parseFloat(amount),
-      },
-      isUserOffer: true,
-      status: "active",
-      createdAt: new Date().toISOString(),
-    };
+    await createListing(ethers.ZeroAddress, "1", "100");
 
-    addOffer(newOffer);
-    setUserOffers((prev) => [...prev, newOffer]);
-    router.push("/offers");
+    // const newOffer: Offer = {
+    //   id: `${Date.now()}`,
+    //   user: {
+    //     address: address || "",
+    //     rating: 5.0,
+    //     trades: 0,
+    //   },
+    //   price: parseFloat(amount),
+    //   currency: selectedToCurrency.symbol,
+    //   available: parseFloat(amount),
+    //   limits: {
+    //     min: parseFloat(amount) * 0.1,
+    //     max: parseFloat(amount),
+    //   },
+    //   isUserOffer: true,
+    //   status: "active",
+    //   createdAt: new Date().toISOString(),
+    // };
+
+    // addOffer(newOffer);
+    // setUserOffers((prev) => [...prev, newOffer]);
+    // router.push("/offers");
   };
 
   return (
@@ -464,6 +467,12 @@ const TransactionForm = () => {
                 className="w-full py-4 px-6 rounded-xl font-medium bg-blue-500 text-white hover:bg-blue-600 transition-colors"
               >
                 {isConnected ? "Create Offer" : "Connect"}
+              </button>
+              <button 
+                onClick={() => approveToken("0xA0C794A7896285c893385B18E8BaF4F0eB87C836")}
+                className="w-full py-4 px-6 rounded-xl font-medium bg-green-500 text-white hover:bg-green-600 transition-colors"
+              >
+                Approve {selectedFromCurrency.symbol}
               </button>
               <button
                 onClick={() => router.push("/offers")}

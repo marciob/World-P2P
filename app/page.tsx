@@ -5,6 +5,7 @@ import MobileCheck from "../components/MobileCheck";
 import TransactionForm from "../components/transaction/TransactionForm";
 import { useSession } from "next-auth/react";
 import LoginPage from "./login/page";
+import PayTransactionPage from "@/components/SendTransaction";
 
 export default function Home() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function Home() {
       {session || isSkipped ? (
         <main className="min-h-screen bg-gray-50">
           <div className="max-w-md mx-auto relative">
+            {/* <PayTransactionPage /> */}
             <TransactionForm />
           </div>
         </main>
