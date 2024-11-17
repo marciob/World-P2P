@@ -47,8 +47,21 @@ export default function ChatPage({ params }: { params: { address: string } }) {
     {
       id: 3,
       type: "sender",
-      content: "Sure, please send the USDC to my wallet address",
+      content: "Sure, please send your bank details",
       time: "2:32 PM",
+    },
+    {
+      id: 4,
+      type: "receiver",
+      content:
+        "Here's my bank account: SCB Bank\nAccount: 123-456-7890\nName: John Doe",
+      time: "2:33 PM",
+    },
+    {
+      id: 5,
+      type: "system",
+      content: "Payment of 1000 USDC received",
+      time: "2:36 PM",
     },
   ];
 
@@ -279,6 +292,14 @@ export default function ChatPage({ params }: { params: { address: string } }) {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Payment Release Info Box */}
+      <div className="px-4 py-3 bg-yellow-50 border-t border-yellow-100">
+        <div className="flex items-center space-x-2 text-yellow-800">
+          <Info size={20} className="shrink-0" />
+          <span className="text-sm font-medium">Waiting payment release</span>
+        </div>
       </div>
 
       {showCamera && (
